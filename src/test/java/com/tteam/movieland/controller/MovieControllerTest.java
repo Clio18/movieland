@@ -103,4 +103,17 @@ class MovieControllerTest {
         verify(movieService).getAll();
     }
 
+    @Test
+    @DisplayName("Test FindMovieById And Check Status Code")
+    void testFindById_AndCheckStatus() throws Exception {
+        when(movieService.getById(1L)).thenReturn(movie1);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/{movieId}", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$.price").value(10.0));
+        verify(movieService).getById(1L);
+    }
+
 }

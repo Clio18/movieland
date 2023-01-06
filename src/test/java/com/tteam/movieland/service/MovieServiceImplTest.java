@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,6 +84,16 @@ class MovieServiceImplTest {
         assertEquals(movie1, actualMovies.get(0));
         assertEquals(movie2, actualMovies.get(1));
         verify(movieRepository).findAll();
+    }
+
+    @Test
+    @DisplayName("test getById and check result is not null")
+    void testGetById_AndCheckResultNotNull() {
+        when(movieRepository.findById(1L)).thenReturn(Optional.ofNullable(movie1));
+        Movie actualMovie = movieService.getById(1L);
+        assertNotNull(actualMovie);
+        assertEquals(movie1, actualMovie);
+        verify(movieRepository).findById(1L);
     }
 
 }

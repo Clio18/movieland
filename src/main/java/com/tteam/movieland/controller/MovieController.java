@@ -4,10 +4,8 @@ import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +19,11 @@ public class MovieController {
     @GetMapping("movies")
     protected @ResponseBody List<Movie> getAllMovie() {
         return movieService.getAll();
+    }
+
+    @GetMapping("movies/{movieId}")
+    protected ResponseEntity<Movie> getMovieByIdShort(@PathVariable("movieId") Long movieId) {
+        return ResponseEntity.ok(movieService.getById(movieId));
     }
 
 
