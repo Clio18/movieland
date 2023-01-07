@@ -1,0 +1,55 @@
+package com.tteam.movieland.service;
+
+import com.tteam.movieland.entity.Genre;
+import com.tteam.movieland.repository.GenreRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+/**
+ * @author Oleksandr Shevchenko
+ */
+@ExtendWith(MockitoExtension.class)
+class GenreServiceImplTest {
+
+    @Mock
+    private GenreRepository genreRepository;
+    private GenreService genreService;
+    private List<Genre> genres;
+    private Genre drama;
+    private Genre comedy;
+
+    @BeforeEach
+    void init() {
+        genreService = new GenreServiceImpl(genreRepository);
+
+        drama = Genre.builder()
+                .name("drama")
+                .build();
+        comedy = Genre.builder()
+                .name("comedy")
+                .build();
+        genres = List.of(drama, comedy);
+    }
+
+    @Test
+    @DisplayName("test getAll genres and check result is not null, size, content equality, calling the repo's method")
+    void testGetAllGenresAndCheckResultNotNullSizeContentCallingTheRepoMethod() {
+        when(genreRepository.findAll()).thenReturn(genres);
+        List<Genre> actualGenres = genreService.getAll();
+        assertNotNull(actualGenres);
+        assertEquals(2, actualGenres.size());
+        assertEquals(drama, actualGenres.get(0));
+        assertEquals(comedy, actualGenres.get(1));
+        verify(genreRepository).findAll();
+    }
+}

@@ -17,13 +17,14 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping("movies")
-    protected @ResponseBody List<Movie> getAllMovie() {
+    protected @ResponseBody List<Movie> getAllMovies() {
         return movieService.getAll();
     }
 
     @GetMapping("movies/{movieId}")
     protected ResponseEntity<Movie> getMovieByIdShort(@PathVariable("movieId") Long movieId) {
-        return ResponseEntity.ok(movieService.getById(movieId));
+        Movie movie = movieService.getById(movieId);
+        return ResponseEntity.ok(movie);
     }
 
 

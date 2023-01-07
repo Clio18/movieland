@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
+import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -116,4 +117,14 @@ class MovieControllerTest {
         verify(movieService).getById(1L);
     }
 
+    @Test
+    @DisplayName("Test FindMovieById If Movie Not Found")
+    void testFindById_IfMovieNotFound() throws Exception {
+        when(movieService.getById(1L)).thenThrow(MovieNotFoundException.class);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/{movieId}", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(movieService).getById(1L);
+    }
 }

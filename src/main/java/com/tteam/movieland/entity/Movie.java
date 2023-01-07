@@ -1,7 +1,6 @@
 package com.tteam.movieland.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -49,7 +48,6 @@ public class Movie {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "movie_country",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -64,7 +62,6 @@ public class Movie {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "movie_genre",
             joinColumns = @JoinColumn(name = "movie_id"),
