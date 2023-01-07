@@ -1,7 +1,7 @@
 package com.tteam.movieland.controller;
 
-import com.tteam.movieland.entity.Movie;
-import com.tteam.movieland.service.MovieService;
+import com.tteam.movieland.entity.Genre;
+import com.tteam.movieland.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,17 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * @author Oleksandr Shevchenko
+ */
 @RestController
 @RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
-public class MovieController {
+public class GenreController {
 
-    private final MovieService movieService;
+    private final GenreService genreService;
 
-    @GetMapping("movies")
-    protected List<Movie> getAllMovie() {
-        return movieService.getAll();
+    @GetMapping("genres")
+    protected List<Genre> getAllGenres() {
+        return genreService.getAll();
     }
-
-
 }

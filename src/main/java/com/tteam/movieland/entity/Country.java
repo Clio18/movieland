@@ -1,6 +1,7 @@
 package com.tteam.movieland.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class Country {
     @Column(name = "name", length = 100)
     private String countryName;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "countries")
     private Set<Movie> movies = new LinkedHashSet<>();
 

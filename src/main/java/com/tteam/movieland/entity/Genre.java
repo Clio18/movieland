@@ -1,9 +1,13 @@
 package com.tteam.movieland.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "genres")
@@ -19,6 +23,10 @@ public class Genre {
 
     @Column(name = "name")
     private String name;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "genres")
+    private Set<Movie> movies = new LinkedHashSet<>();
 
     public String getName() {
         return name;
