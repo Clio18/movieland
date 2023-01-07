@@ -103,4 +103,23 @@ class MovieControllerTest {
         verify(movieService).getAll();
     }
 
+    @Test
+    @DisplayName("Test GetRandomMovie And Check Status Code, Result Size, Fields, Service Method Calling")
+    void testGetRandomMovie_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
+        List<Movie> movies = List.of(
+                Movie.builder().id(1L).build(),
+                Movie.builder().id(2L).build(),
+                Movie.builder().id(3L).build());
+        when(movieService.getThreeRandom()).thenReturn(movies);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/random")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[1].id").value(2L))
+                .andExpect(jsonPath("$[2].id").value(3L));
+        verify(movieService).getThreeRandom();
+    }
+
 }
