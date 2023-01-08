@@ -19,12 +19,12 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping
-    protected @ResponseBody List<Movie> getAllMovie() {
+    protected List<Movie> getAllMovie() {
         return movieService.getAll();
     }
 
     @GetMapping("random")
-    protected @ResponseBody List<Movie> getRandomMovie() {
+    protected List<Movie> getRandomMovie() {
         return movieService.getThreeRandom();
     }
 
