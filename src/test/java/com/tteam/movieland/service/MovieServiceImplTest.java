@@ -85,4 +85,16 @@ class MovieServiceImplTest {
         verify(movieRepository).findAll();
     }
 
+    @Test
+    @DisplayName("test getMoviesByGenreId and check result is not null, size, content equality, calling the repo's method")
+    void testGetMoviesByGenreId_AndCheckResultNotNull_Size_Content_CallingTheRepoMethod() {
+        when(movieRepository.findByGenres_Id(1L)).thenReturn(movies);
+        List<Movie> actualMovies = movieService.getMoviesByGenreId(1L);
+        assertNotNull(actualMovies);
+        assertEquals(2, actualMovies.size());
+        assertEquals(movie1, actualMovies.get(0));
+        assertEquals(movie2, actualMovies.get(1));
+        verify(movieRepository).findByGenres_Id(1L);
+    }
+
 }

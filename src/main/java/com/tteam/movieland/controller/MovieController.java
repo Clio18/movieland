@@ -5,6 +5,7 @@ import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,11 @@ public class MovieController {
     @GetMapping("random")
     protected List<Movie> getRandomMovie() {
         return movieService.getThreeRandom();
+    }
+
+    @GetMapping(value = "/genre/{genreId}")
+    protected List<Movie> getMoviesByGenreId(@PathVariable Long genreId) {
+        return movieService.getMoviesByGenreId(genreId);
     }
 
 
