@@ -6,20 +6,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class MovieController {
 
     private final MovieService movieService;
 
-    @GetMapping("movies")
+    @GetMapping
     protected List<Movie> getAllMovie() {
         return movieService.getAll();
+    }
+
+    @GetMapping("random")
+    protected List<Movie> getRandomMovie() {
+        return movieService.getThreeRandom();
     }
 
 
