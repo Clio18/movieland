@@ -1,6 +1,5 @@
 package com.tteam.movieland.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,12 +39,12 @@ public class Country {
         this.movies = movies;
     }
 
-    public String getPicturePath() {
+    public String getCountryName() {
         return countryName;
     }
 
-    public void setPicturePath(String picturePath) {
-        this.countryName = picturePath;
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 
     public Long getId() {

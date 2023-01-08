@@ -1,7 +1,5 @@
 package com.tteam.movieland.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -11,6 +9,7 @@ import org.hibernate.type.SqlTypes;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -54,7 +53,6 @@ public class Movie {
     @JoinTable(name = "movie_country",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "country_id"))
-    @JsonIgnore
     private Set<Country> countries = new LinkedHashSet<>();
 
     @Getter(AccessLevel.NONE)
@@ -69,11 +67,10 @@ public class Movie {
     @JoinTable(name = "movie_genre",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    @JsonIgnore
     private Set<Genre> genres = new LinkedHashSet<>();
 
-    public Set<Genre> getGenres() {
-        return genres;
+    public Set<String> getGenres() {
+        return genres.stream().map(Genre::getName).collect(Collectors.toSet());
     }
 
     public void setGenres(Set<Genre> genres) {
@@ -88,8 +85,8 @@ public class Movie {
         this.poster = poster;
     }
 
-    public Set<Country> getCountries() {
-        return countries;
+    public Set<String> getCountries() {
+        return countries.stream().map(Country::getCountryName).collect(Collectors.toSet());
     }
 
     public void setCountries(Set<Country> countries) {
