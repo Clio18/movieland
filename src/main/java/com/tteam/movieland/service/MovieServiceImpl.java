@@ -2,6 +2,7 @@ package com.tteam.movieland.service;
 
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.GenreNotFoundException;
+import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.MovieRepository;
 import com.tteam.movieland.util.Utils;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,11 @@ public class MovieServiceImpl implements MovieService {
             throw new GenreNotFoundException("Could not find genre by id: " + genreId);
         }
         return movies;
+    }
+
+    @Override
+    public Movie getById(Long movieId) {
+        return movieRepository.findById(movieId)
+                .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
     }
 }
