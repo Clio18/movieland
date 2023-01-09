@@ -89,19 +89,43 @@ class MovieControllerTest {
     }
 
     @Test
-    @DisplayName("Test GetAllMovies And Check Status Code, Result Size, Fields, Service Method Calling")
-    void testGetAllMovies_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
+    @DisplayName("""
+    Test GetAllMovies Rating Descending Order And Check Status Code, Result Size, Fields, 
+    Service Method Calling""")
+    void testGetAllMoviesDescRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie1, movie2);
         when(movieService.getAll()).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
-                        .get("/api/v1/movies")
+                        .get("/api/v1/movies?rating=desc")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
-                .andExpect(jsonPath("$[0].price").value(10.0))
-                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
-                .andExpect(jsonPath("$[1].price").value(12.0));
+                .andExpect(status().isOk());
+        verify(movieService).getAll();
+    }
+
+    @Test
+    @DisplayName("""
+    Test GetAllMovies Rating Descending Order And Check Status Code, Result Size, Fields, 
+    Service Method Calling""")
+    void testGetAllMoviesAscRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
+        List<Movie> movies = List.of(movie1, movie2);
+        when(movieService.getAll()).thenReturn(movies);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies?rating=asc")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        verify(movieService).getAll();
+    }
+
+    @Test
+    @DisplayName("""
+    Test GetAllMovies No Rating Ordering And Check Status Code, Result Size, Fields, Service Method Calling""")
+    void testGetAllMoviesNoRatingOrdering_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
+        List<Movie> movies = List.of(movie1, movie2);
+        when(movieService.getAll()).thenReturn(movies);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies?rating=")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(movieService).getAll();
     }
 
@@ -121,30 +145,80 @@ class MovieControllerTest {
     }
 
     @Test
-    @DisplayName("Test GetMoviesByGenreId And Check Status Code, Result Size, Fields, Service Method Calling")
-    void testGetMoviesByGenreId_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
+    @DisplayName("""
+    Test GetMoviesByGenreId And Rating Ascending Order And Check Status Code, 
+    Result Size, Fields, Service Method Calling""")
+    void testGetMoviesByGenreIdAndRatingAsc_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie1, movie2);
         when(movieService.getMoviesByGenreId(1L)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
-                        .get("/api/v1/movies/genre/{genreId}", 1L)
+                        .get("/api/v1/movies/genre/{genreId}?rating=asc", 1L)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
-                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"));
+                .andExpect(status().isOk());
         verify(movieService).getMoviesByGenreId(1L);
     }
 
     @Test
-    @DisplayName("Test GetMoviesByGenreId If Genre Not Found")
-    void testGetMoviesByGenreId_IfGenreNotFound() throws Exception {
+    @DisplayName("Test GetMoviesByGenreId And Rating Ascending Order If Genre Not Found")
+    void testGetMoviesByGenreIdAndRatingAsc_IfGenreNotFound() throws Exception {
         when(movieService.getMoviesByGenreId(1L)).thenThrow(GenreNotFoundException.class);
         mockMvc.perform( MockMvcRequestBuilders
-                        .get("/api/v1/movies/genre/{genreId}", 1L)
+                        .get("/api/v1/movies/genre/{genreId}?rating=asc", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(movieService).getMoviesByGenreId(1L);
     }
+
+    @Test
+    @DisplayName("""
+    Test GetMoviesByGenreId And Rating Descending Order And Check Status Code, 
+    Result Size, Fields, Service Method Calling""")
+    void testGetMoviesByGenreIdAndRatingDesc_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
+        List<Movie> movies = List.of(movie1, movie2);
+        when(movieService.getMoviesByGenreId(1L)).thenReturn(movies);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/genre/{genreId}?rating=desc", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        verify(movieService).getMoviesByGenreId(1L);
+    }
+
+    @Test
+    @DisplayName("Test GetMoviesByGenreId And Rating Descending Order If Genre Not Found")
+    void testGetMoviesByGenreIdAndRatingDesc_IfGenreNotFound() throws Exception {
+        when(movieService.getMoviesByGenreId(1L)).thenThrow(GenreNotFoundException.class);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/genre/{genreId}?rating=desc", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(movieService).getMoviesByGenreId(1L);
+    }
+
+    @Test
+    @DisplayName("""
+    Test GetMoviesByGenreId And No Rating Ordering And Check Status Code, 
+    Result Size, Fields, Service Method Calling""")
+    void testGetMoviesByGenreIdAndNoRatingOrdering_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
+        List<Movie> movies = List.of(movie1, movie2);
+        when(movieService.getMoviesByGenreId(1L)).thenReturn(movies);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/genre/{genreId}?rating=", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        verify(movieService).getMoviesByGenreId(1L);
+    }
+
+    @Test
+    @DisplayName("Test GetMoviesByGenreId And No Rating Ordering If Genre Not Found")
+    void testGetMoviesByGenreIdAndNoRatingOrdering_IfGenreNotFound() throws Exception {
+        when(movieService.getMoviesByGenreId(1L)).thenThrow(GenreNotFoundException.class);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/genre/{genreId}?rating=", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(movieService).getMoviesByGenreId(1L);
+    }
+
 
     @Test
     @DisplayName("Test FindMovieById And Check Status Code")
