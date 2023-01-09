@@ -5,10 +5,7 @@ import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +17,10 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping
-    protected List<Movie> getAllMovie() {
-        return movieService.getAll();
+    //how to get all movie without request param?
+    protected List<Movie> getAll(@RequestParam(value = "rating") String sort) {
+        List<Movie> movies = movieService.getAll();
+        return movieService.perform(movies, sort);
     }
 
     @GetMapping("random")
@@ -30,8 +29,9 @@ public class MovieController {
     }
 
     @GetMapping(value = "/genre/{genreId}")
-    protected List<Movie> getMoviesByGenreId(@PathVariable Long genreId) {
-        return movieService.getMoviesByGenreId(genreId);
+    protected List<Movie> getMoviesByGenreId(@PathVariable Long genreId, @RequestParam(value = "rating") String sort) {
+        List<Movie> moviesByGenre = movieService.getMoviesByGenreId(genreId);
+        return movieService.perform(moviesByGenre, sort);
     }
 
     @GetMapping("/{movieId}")

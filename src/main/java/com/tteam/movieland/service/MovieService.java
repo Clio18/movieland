@@ -6,8 +6,12 @@ import java.util.List;
 
 public interface MovieService {
     List<Movie> getAll();
+
     List<Movie> getThreeRandom();
+
     List<Movie> getMoviesByGenreId(Long genreId);
+
+    List<Movie> perform(List<Movie> movies, String sort);
     Movie getById(Long movieId);
 }
 
