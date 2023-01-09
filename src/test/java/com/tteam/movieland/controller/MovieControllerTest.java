@@ -5,6 +5,7 @@ import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.GenreNotFoundException;
+import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -144,5 +145,30 @@ class MovieControllerTest {
                 .andExpect(status().isNotFound());
         verify(movieService).getMoviesByGenreId(1L);
     }
+
+    @Test
+    @DisplayName("Test FindMovieById And Check Status Code")
+    void testFindById_AndCheckStatus() throws Exception {
+        when(movieService.getById(1L)).thenReturn(movie1);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/{movieId}", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$.price").value(10.0));
+        verify(movieService).getById(1L);
+    }
+
+    @Test
+    @DisplayName("Test FindMovieById If Movie Not Found")
+    void testFindById_IfMovieNotFound() throws Exception {
+        when(movieService.getById(1L)).thenThrow(MovieNotFoundException.class);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/{movieId}", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(movieService).getById(1L);
+    }
+
 
 }
