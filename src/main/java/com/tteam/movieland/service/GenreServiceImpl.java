@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @EnableScheduling
 @RequiredArgsConstructor
-public class GenreServiceImpl implements GenreService{
+public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
     private List<Genre> genresCache = new ArrayList<>();
@@ -35,7 +35,7 @@ public class GenreServiceImpl implements GenreService{
     }
 
     @Scheduled(cron = "${cron.interval}")
-    private void clearCache(){
+    private void clearCache() {
         log.info("Clearing genres cache...");
         genresCache = new ArrayList<>();
     }

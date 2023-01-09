@@ -4,19 +4,18 @@ import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.GenreNotFoundException;
 import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.MovieRepository;
-import com.tteam.movieland.util.SortAction;
 import com.tteam.movieland.util.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MovieServiceImpl implements MovieService {
     private static final int NUMBER_OF_RANDOM_MOVIES = 3;
-    private static final String ASC_SORT = "ASC";
-    private static final String DESC_SORT = "DESC";
+    private static final Comparator<Movie> COMPARATOR_BY_RATING = Comparator.comparing(Movie::getRating);
 
     private final MovieRepository movieRepository;
 
@@ -42,18 +41,20 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> perform(List<Movie> movies, String sort) {
-        String sortCase = sort.toUpperCase();
-        if(sortCase.equals(DESC_SORT)){
-            return SortAction.DESC_RATING.perform(movies);
-        }else if (sortCase.equals(ASC_SORT)){
-            return SortAction.ASC_RATING.perform(movies);
-        }else return movies;
-    }
-
-    @Override
     public Movie getById(Long movieId) {
         return movieRepository.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
+    }
+
+    @Override
+    public List<Movie> getAllSortedByRating(String sort) {
+        List<Movie> movies = getAll();
+        return Utils.performSorting(movies, sort, COMPARATOR_BY_RATING);
+    }
+
+    @Override
+    public List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sort) {
+        List<Movie> movies = getMoviesByGenreId(genreId);
+        return Utils.performSorting(movies, sort, COMPARATOR_BY_RATING);
     }
 }

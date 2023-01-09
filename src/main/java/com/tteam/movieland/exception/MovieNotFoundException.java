@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Oleksandr Shevchenko
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class MovieNotFoundException extends RuntimeException{
+public class MovieNotFoundException extends RuntimeException {
     public MovieNotFoundException(String message) {
         super(message);
     }

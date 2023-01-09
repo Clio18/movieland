@@ -1,29 +1,27 @@
 package com.tteam.movieland.util;
 
-import com.tteam.movieland.entity.Movie;
-
 import java.util.Comparator;
 import java.util.List;
 
 public enum SortAction {
 
-    ASC_RATING {
+    ASC {
         @Override
-        public List<Movie> perform(List<Movie> movies) {
-           return movies.stream()
-                   .sorted(Comparator.comparing(Movie::getRating))
-                   .toList();
+        public <E> List<E> perform(List<E> movies, Comparator<E> comparator) {
+            return movies.stream()
+                    .sorted(comparator)
+                    .toList();
         }
     },
 
-    DESC_RATING {
+    DESC {
         @Override
-        public List<Movie> perform(List<Movie> movies) {
+        public <E> List<E> perform(List<E> movies, Comparator<E> comparator) {
             return movies.stream()
-                    .sorted(Comparator.comparing(Movie::getRating).reversed())
+                    .sorted(comparator.reversed())
                     .toList();
         }
     };
 
-    public abstract List<Movie> perform(List<Movie> movies);
+    public abstract <E> List<E> perform(List<E> movies, Comparator<E> comparator);
 }
