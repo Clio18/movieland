@@ -1,6 +1,5 @@
 package com.tteam.movieland.dto;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 @Getter
