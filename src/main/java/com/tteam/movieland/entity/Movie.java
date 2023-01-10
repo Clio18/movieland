@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString
-@Table(name = "movies")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "movies")
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movies_id_seq")
@@ -58,8 +58,6 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "country_id"))
     private Set<Country> countries = new LinkedHashSet<>();
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     @Column(name = "picture_path", length = 500)
     private String poster;
 
@@ -74,83 +72,11 @@ public class Movie {
     private Set<Genre> genres = new LinkedHashSet<>();
 
     public Set<String> getGenres() {
-        return genres.stream().map(Genre::getName).collect(Collectors.toSet());
-    }
-
-    public void setGenres(Set<Genre> genres) {
-        this.genres = genres;
-    }
-
-    public String getPoster() {
-        return poster;
-    }
-
-    public void setPoster(String poster) {
-        this.poster = poster;
+        return genres.stream().map(Genre::getGenreName).collect(Collectors.toSet());
     }
 
     public Set<String> getCountries() {
         return countries.stream().map(Country::getCountryName).collect(Collectors.toSet());
-    }
-
-    public void setCountries(Set<Country> countries) {
-        this.countries = countries;
-    }
-
-    public Double getRating() {
-        return rating;
-    }
-
-    public void setRating(Double rating) {
-        this.rating = rating;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getYearOfRelease() {
-        return yearOfRelease;
-    }
-
-    public void setYearOfRelease(Integer yearOfRelease) {
-        this.yearOfRelease = yearOfRelease;
-    }
-
-    public String getNameNative() {
-        return nameNative;
-    }
-
-    public void setNameNative(String nameNative) {
-        this.nameNative = nameNative;
-    }
-
-    public String getNameUkr() {
-        return nameUkr;
-    }
-
-    public void setNameUkr(String nameUkr) {
-        this.nameUkr = nameUkr;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     @Override
@@ -165,4 +91,5 @@ public class Movie {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }

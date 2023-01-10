@@ -40,10 +40,10 @@ class GenreControllerTest {
     @BeforeEach
     void init() {
         drama = Genre.builder()
-                .name("drama")
+                .genreName("drama")
                 .build();
         comedy = Genre.builder()
-                .name("comedy")
+                .genreName("comedy")
                 .build();
     }
 
@@ -57,8 +57,8 @@ class GenreControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].name").value("drama"))
-                .andExpect(jsonPath("$[1].name").value("comedy"));
+                .andExpect(jsonPath("$[0].genreName").value("drama"))
+                .andExpect(jsonPath("$[1].genreName").value("comedy"));
         verify(genreService).getAll();
     }
 }

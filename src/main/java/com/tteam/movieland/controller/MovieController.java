@@ -22,8 +22,7 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping
-    //how to get all movie without request param?
-    protected List<Movie> getAll(@RequestParam(value = "rating") String sortingOrder) {
+    protected List<Movie> getAll(@RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
         return movieService.getAllSortedByRating(sortingOrder);
     }
 
@@ -34,7 +33,7 @@ public class MovieController {
 
     @GetMapping(value = "/genre/{genreId}")
     protected List<Movie> getMoviesByGenreId(@PathVariable Long genreId,
-                                             @RequestParam(value = "rating") String sortingOrder) {
+                                             @RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
         return movieService.getMoviesByGenreSortedByRating(genreId, sortingOrder);
     }
 
