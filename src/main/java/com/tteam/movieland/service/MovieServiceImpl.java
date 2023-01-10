@@ -1,6 +1,5 @@
 package com.tteam.movieland.service;
 
-import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.dto.mapper.EntityMapper;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.GenreNotFoundException;
