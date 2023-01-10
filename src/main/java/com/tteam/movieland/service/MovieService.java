@@ -11,7 +11,10 @@ public interface MovieService {
 
     List<Movie> getMoviesByGenreId(Long genreId);
 
-    List<Movie> perform(List<Movie> movies, String sort);
     Movie getById(Long movieId);
+
+    List<Movie> getAllSortedByRating(String sort);
+
+    List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sort);
 }
 
