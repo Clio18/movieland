@@ -13,8 +13,8 @@ public interface MovieService {
 
     Movie getById(Long movieId);
 
-    List<Movie> getAllSortedByRating(String sort);
+    List<Movie> getAllSortedByRating(String sortingOrder);
 
-    List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sort);
+    List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sortingOrder);
 }
 
