@@ -22,19 +22,22 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping
-    protected List<Movie> getAll(@RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
-        return movieService.getAllSortedByRating(sortingOrder);
+    protected List<MovieDto> getAll(@RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
+        List<Movie> sortedMovies = movieService.getAllSortedByRating(sortingOrder);
+        return sortedMovies.stream().map(mapper::entityToDto).toList();
     }
 
     @GetMapping("random")
-    protected List<Movie> getRandomMovie() {
-        return movieService.getThreeRandom();
+    protected List<MovieDto> getRandomMovie() {
+        List<Movie> randomMovies = movieService.getThreeRandom();
+        return randomMovies.stream().map(mapper::entityToDto).toList();
     }
 
     @GetMapping(value = "/genre/{genreId}")
-    protected List<Movie> getMoviesByGenreId(@PathVariable Long genreId,
-                                             @RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
-        return movieService.getMoviesByGenreSortedByRating(genreId, sortingOrder);
+    protected List<MovieDto> getMoviesByGenreId(@PathVariable Long genreId,
+                                                @RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
+        List<Movie> sortedMovies = movieService.getMoviesByGenreSortedByRating(genreId, sortingOrder);
+        return sortedMovies.stream().map(mapper::entityToDto).toList();
     }
 
     @GetMapping("/{movieId}")
@@ -43,6 +46,4 @@ public class MovieController {
         MovieDto movieDto = mapper.entityToDto(movie);
         return ResponseEntity.ok(movieDto);
     }
-
-
 }
