@@ -1,11 +1,14 @@
 package com.tteam.movieland.service;
 
+import com.tteam.movieland.dto.MovieDto;
+import com.tteam.movieland.dto.mapper.EntityMapper;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.GenreNotFoundException;
 import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.MovieRepository;
 import com.tteam.movieland.util.Utils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -18,6 +21,9 @@ public class MovieServiceImpl implements MovieService {
     private static final Comparator<Movie> COMPARATOR_BY_RATING = Comparator.comparing(Movie::getRating);
 
     private final MovieRepository movieRepository;
+
+    @Autowired
+    private EntityMapper mapper;
 
     @Override
     public List<Movie> getAll() {
@@ -33,11 +39,11 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> getMoviesByGenreId(Long genreId) {
-        List<Movie> movies = movieRepository.findByGenres_Id(genreId);
-        if (movies.isEmpty()) {
+        List<Movie> moviesByGenre = movieRepository.findByGenres_Id(genreId);
+        if (moviesByGenre.isEmpty()) {
             throw new GenreNotFoundException("Could not find genre by id: " + genreId);
         }
-        return movies;
+        return moviesByGenre;
     }
 
     @Override
