@@ -13,12 +13,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-/**
- * @author Oleksandr Shevchenko
- */
 @ExtendWith(MockitoExtension.class)
 class GenreServiceImplTest {
 
@@ -52,5 +48,15 @@ class GenreServiceImplTest {
         assertEquals(drama, actualGenres.get(0));
         assertEquals(comedy, actualGenres.get(1));
         verify(genreRepository).findAll();
+    }
+
+    @Test
+    @DisplayName("test getAll genres and check cache usage")
+    void testGetAllGenresAndCheckCacheUsage() {
+        when(genreRepository.findAll()).thenReturn(genres);
+        genreService.getAll();
+        genreService.getAll();
+        genreService.getAll();
+        verify(genreRepository, times(1)).findAll();
     }
 }

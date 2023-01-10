@@ -47,14 +47,14 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> getAllSortedByRating(String sort) {
+    public List<Movie> getAllSortedByRating(String sortingOrder) {
         List<Movie> movies = getAll();
-        return Utils.performSorting(movies, sort, COMPARATOR_BY_RATING);
+        return Utils.performSorting(movies, sortingOrder, COMPARATOR_BY_RATING);
     }
 
     @Override
-    public List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sort) {
+    public List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sortingOrder) {
         List<Movie> movies = getMoviesByGenreId(genreId);
-        return Utils.performSorting(movies, sort, COMPARATOR_BY_RATING);
+        return Utils.performSorting(movies, sortingOrder, COMPARATOR_BY_RATING);
     }
 }

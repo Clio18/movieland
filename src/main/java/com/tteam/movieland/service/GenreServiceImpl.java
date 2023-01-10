@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Oleksandr Shevchenko
- */
 @Log4j2
 @Service
 @EnableScheduling
