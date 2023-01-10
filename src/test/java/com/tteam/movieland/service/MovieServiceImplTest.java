@@ -42,10 +42,10 @@ class MovieServiceImplTest {
         Set<Country> countries = Set.of(usa, australia);
 
         Genre drama = Genre.builder()
-                .name("drama")
+                .genreName("drama")
                 .build();
         Genre comedy = Genre.builder()
-                .name("comedy")
+                .genreName("comedy")
                 .build();
         Set<Genre> genres = Set.of(drama, comedy);
 

@@ -36,6 +36,7 @@ public class Utils {
             return SortAction.DESC.perform(items, comparator);
         } else if (sortOrderCase.equals(ASC_SORT)) {
             return SortAction.ASC.perform(items, comparator);
-        } else return items;
+        }
+        return items;
     }
 }

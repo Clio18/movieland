@@ -30,10 +30,10 @@ class GenreServiceImplTest {
         genreService = new GenreServiceImpl(genreRepository);
 
         drama = Genre.builder()
-                .name("drama")
+                .genreName("drama")
                 .build();
         comedy = Genre.builder()
-                .name("comedy")
+                .genreName("comedy")
                 .build();
         genres = List.of(drama, comedy);
     }
