@@ -3,6 +3,8 @@ package com.tteam.movieland.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -46,6 +48,7 @@ public class Movie {
     @JdbcTypeCode(SqlTypes.NUMERIC)
     private Double rating;
 
+    @Fetch(FetchMode.SUBSELECT)
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ToString.Exclude
@@ -60,6 +63,7 @@ public class Movie {
     @Column(name = "picture_path", length = 500)
     private String poster;
 
+    @Fetch(FetchMode.SUBSELECT)
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ToString.Exclude
