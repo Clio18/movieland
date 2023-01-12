@@ -1,4 +1,4 @@
-package com.tteam.movieland.util;
+package com.tteam.movieland.util.model;
 
 import java.util.Comparator;
 import java.util.List;

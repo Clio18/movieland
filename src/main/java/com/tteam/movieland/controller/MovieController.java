@@ -41,8 +41,9 @@ public class MovieController {
     }
 
     @GetMapping("/{movieId}")
-    protected ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId) {
-        Movie movie = movieService.getById(movieId);
+    protected ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId,
+                                                    @RequestParam(value = "currency", defaultValue = "UAH") String currency) {
+        Movie movie = movieService.getById(movieId, currency);
         MovieDto movieDto = mapper.entityToDto(movie);
         return ResponseEntity.ok(movieDto);
     }
