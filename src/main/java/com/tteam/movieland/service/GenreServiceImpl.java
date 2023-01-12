@@ -31,7 +31,7 @@ public class GenreServiceImpl implements GenreService {
         return genresCache;
     }
 
-    @Scheduled(cron = "${cron.interval}")
+    @Scheduled(cron = "${cron.interval.genre}")
     private void clearCache() {
         log.info("Clearing genres cache...");
         genresCache = new ArrayList<>();
