@@ -39,7 +39,7 @@ class GenreServiceImplTest {
     }
 
     @Test
-    @DisplayName("test getAll genres and check result is not null, size, content equality, calling the repo's method")
+    @DisplayName("Test getAll genres and check result is not null, size, content equality, calling the repo's method")
     void testGetAllGenresAndCheckResultNotNullSizeContentCallingTheRepoMethod() {
         when(genreRepository.findAll()).thenReturn(genres);
         List<Genre> actualGenres = genreService.getAll();
@@ -51,7 +51,7 @@ class GenreServiceImplTest {
     }
 
     @Test
-    @DisplayName("test getAll genres and check cache usage")
+    @DisplayName("Test getAll genres and check cache usage")
     void testGetAllGenresAndCheckCacheUsage() {
         when(genreRepository.findAll()).thenReturn(genres);
         genreService.getAll();

@@ -17,7 +17,7 @@ class UtilsTest {
     private final Integer numberOfElements = 5;
 
     @Test
-    @DisplayName("test PickNRandomElements And CheckNotNull, Not Empty, Size and Result Not Sorted")
+    @DisplayName("Test PickNRandomElements And CheckNotNull, Not Empty, Size and Result Not Sorted")
     void testPickNRandomElements_CheckNotNull_NotEmpty_Size_NotSorted(){
         List<Integer> elements = Utils.pickNRandomElements(list, numberOfElements);
         assertNotNull(elements);
@@ -28,7 +28,7 @@ class UtilsTest {
     }
 
     @Test
-    @DisplayName("test PickNRandomElements And Check Exception Throwing And Message")
+    @DisplayName("Test PickNRandomElements And Check Exception Throwing And Message")
     void testPickNRandomElements_CheckExceptionThrowingAndMessage(){
         int bigNumber = 100;
         RandomMoviesException exception = assertThrows(RandomMoviesException.class, () -> {
@@ -41,7 +41,7 @@ class UtilsTest {
     }
 
     @Test
-    @DisplayName("test PerformSorting With Ascending Order And Check Order Of The Items")
+    @DisplayName("Test PerformSorting With Ascending Order And Check Order Of The Items")
     void testPerformSortingAscOrder_AndCheckOrderOfTheItems (){
         List<Movie> movies = List.of(
                 Movie.builder().rating(2.0).build(),
@@ -56,7 +56,7 @@ class UtilsTest {
     }
 
     @Test
-    @DisplayName("test PerformSorting With Descending Order And Check Order Of The Items")
+    @DisplayName("Test PerformSorting With Descending Order And Check Order Of The Items")
     void testPerformSortingDescOrder_AndCheckOrderOfTheItems (){
         List<Movie> movies = List.of(
                 Movie.builder().rating(2.0).build(),
@@ -71,7 +71,7 @@ class UtilsTest {
     }
 
     @Test
-    @DisplayName("test PerformSorting With Wrong Order And Check Order Don't Change")
+    @DisplayName("Test PerformSorting With Wrong Order And Check Order Don't Change")
     void testPerformSortingWrongOrder_AndCheckOrderDontChange (){
         List<Movie> movies = List.of(
                 Movie.builder().rating(2.0).build(),
