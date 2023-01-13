@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CurrencyProviderTest {
 
-
     private final Movie movie1;
     private final Movie movie2;
 
@@ -33,8 +32,8 @@ class CurrencyProviderTest {
                 .poster("url/")
                 .description("Best movie")
                 .countries(Set.of(Country.builder()
-                                .countryName("usa")
-                                .build()))
+                        .countryName("usa")
+                        .build()))
                 .genres(Set.of(Genre.builder()
                         .genreName("comedy")
                         .build()))
@@ -59,7 +58,7 @@ class CurrencyProviderTest {
     }
 
     @Test
-    @DisplayName("test SetPriceInCurrency Method Should Return Movie With Changed Price")
+    @DisplayName("Test SetPriceInCurrency Method Should Return Movie With Changed Price")
     void testSetPriceInCurrencyMethodShouldReturnMovieWithChangedPrice() {
         try (MockedStatic<CurrencyProvider> providerMockedStatic = Mockito.mockStatic(CurrencyProvider.class)) {
             providerMockedStatic.when(() -> setPriceInCurrency(movie1, "USD")).thenReturn(movie2);
@@ -68,7 +67,7 @@ class CurrencyProviderTest {
     }
 
     @Test
-    @DisplayName("test GetCurrencyRateOnThisDay Method Should Return Actual Currency Rate")
+    @DisplayName("Test GetCurrencyRateOnThisDay Method Should Return Actual Currency Rate")
     void testGetCurrencyRateOnThisDayMethodShouldReturnActualCurrencyRate() {
         try (MockedStatic<CurrencyProvider> providerMockedStatic = Mockito.mockStatic(CurrencyProvider.class)) {
             providerMockedStatic.when(() -> CurrencyProvider.getCurrencyRateOnThisDay(Currency.USD)).thenReturn(36.3);

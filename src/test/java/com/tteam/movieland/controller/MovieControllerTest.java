@@ -111,8 +111,25 @@ class MovieControllerTest {
         when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].price").value(10.0))
+                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
+                .andExpect(jsonPath("$[0].rating").value(10.0))
+                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].description").value("Best movie"))
+
+                .andExpect(jsonPath("$[1].price").value(12.0))
+                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
+                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
+                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
+                .andExpect(jsonPath("$[1].rating").value(9.0))
+                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].description").value("Good movie"));
+
         verify(movieService).getAllSortedByRating(sortingOrder);
     }
 
@@ -121,13 +138,30 @@ class MovieControllerTest {
     Test GetAll Rating Descending Order And Check Status Code, Result Size, Fields,
     Service Method Calling""")
     void testGetAllAscRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
-        List<Movie> movies = List.of(movie1, movie2);
+        List<Movie> movies = List.of(movie2, movie1);
         String sortingOrder = "asc";
         when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].price").value(12.0))
+                .andExpect(jsonPath("$[0].nameUkr").value("Matrix2"))
+                .andExpect(jsonPath("$[0].nameNative").value("Matrix2"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(1999))
+                .andExpect(jsonPath("$[0].rating").value(9.0))
+                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].description").value("Good movie"))
+
+                .andExpect(jsonPath("$[1].price").value(10.0))
+                .andExpect(jsonPath("$[1].nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$[1].nameNative").value("Matrix"))
+                .andExpect(jsonPath("$[1].yearOfRelease").value(1989))
+                .andExpect(jsonPath("$[1].rating").value(10.0))
+                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].description").value("Best movie"));
+
         verify(movieService).getAllSortedByRating(sortingOrder);
     }
 
@@ -140,8 +174,25 @@ class MovieControllerTest {
         when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].price").value(10.0))
+                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
+                .andExpect(jsonPath("$[0].rating").value(10.0))
+                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].description").value("Best movie"))
+
+                .andExpect(jsonPath("$[1].price").value(12.0))
+                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
+                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
+                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
+                .andExpect(jsonPath("$[1].rating").value(9.0))
+                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].description").value("Good movie"));
+
         verify(movieService).getAllSortedByRating(sortingOrder);
     }
 
@@ -152,7 +203,7 @@ class MovieControllerTest {
         when(movieService.getThreeRandom()).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/random")
-                        .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].rating").value(10.0))
@@ -170,8 +221,25 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].price").value(10.0))
+                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
+                .andExpect(jsonPath("$[0].rating").value(10.0))
+                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].description").value("Best movie"))
+
+                .andExpect(jsonPath("$[1].price").value(12.0))
+                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
+                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
+                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
+                .andExpect(jsonPath("$[1].rating").value(9.0))
+                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].description").value("Good movie"));
+
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -182,7 +250,7 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenThrow(GenreNotFoundException.class);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
@@ -197,8 +265,25 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].price").value(10.0))
+                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
+                .andExpect(jsonPath("$[0].rating").value(10.0))
+                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].description").value("Best movie"))
+
+                .andExpect(jsonPath("$[1].price").value(12.0))
+                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
+                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
+                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
+                .andExpect(jsonPath("$[1].rating").value(9.0))
+                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].description").value("Good movie"));
+
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -209,7 +294,7 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenThrow(GenreNotFoundException.class);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
@@ -224,8 +309,25 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].price").value(10.0))
+                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
+                .andExpect(jsonPath("$[0].rating").value(10.0))
+                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].description").value("Best movie"))
+
+                .andExpect(jsonPath("$[1].price").value(12.0))
+                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
+                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
+                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
+                .andExpect(jsonPath("$[1].rating").value(9.0))
+                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].description").value("Good movie"));
+
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -236,7 +338,7 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenThrow(GenreNotFoundException.class);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
@@ -248,7 +350,7 @@ class MovieControllerTest {
         when(movieService.getById(1L, currency)).thenReturn(movie1);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nameUkr").value("Matrix"))
                 .andExpect(jsonPath("$.price").value(10.0));
@@ -262,7 +364,7 @@ class MovieControllerTest {
         when(movieService.getById(1L, currency)).thenReturn(movie3);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, currency)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nameUkr").value("Matrix"))
                 .andExpect(jsonPath("$.price").value(0.27));
@@ -276,7 +378,7 @@ class MovieControllerTest {
         when(movieService.getById(1L, currency)).thenThrow(MovieNotFoundException.class);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(movieService).getById(1L, currency);
     }
@@ -288,7 +390,7 @@ class MovieControllerTest {
         when(movieService.getById(1L, currency)).thenThrow(CurrencyNotFoundException.class);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, currency)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(movieService).getById(1L, currency);
     }

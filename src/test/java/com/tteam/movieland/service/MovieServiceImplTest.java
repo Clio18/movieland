@@ -75,7 +75,7 @@ class MovieServiceImplTest {
     }
 
     @Test
-    @DisplayName("test getAll and check result is not null, size, content equality, calling the repo's method")
+    @DisplayName("Test getAll and check result is not null, size, content equality, calling the repo's method")
     void testGetAll_AndCheckResultNotNull_Size_Content_CallingTheRepoMethod() {
         when(movieRepository.findAll()).thenReturn(movies);
         List<Movie> actualMovies = movieService.getAll();
@@ -87,7 +87,7 @@ class MovieServiceImplTest {
     }
 
     @Test
-    @DisplayName("test getMoviesByGenreId and check result is not null, size, content equality, calling the repo's method")
+    @DisplayName("Test getMoviesByGenreId and check result is not null, size, content equality, calling the repo's method")
     void testGetMoviesByGenreId_AndCheckResultNotNull_Size_Content_CallingTheRepoMethod() {
         when(movieRepository.findByGenres_Id(1L)).thenReturn(movies);
         List<Movie> actualMovies = movieService.getMoviesByGenreId(1L);
@@ -99,7 +99,7 @@ class MovieServiceImplTest {
     }
 
     @Test
-    @DisplayName("test getById and check result is not null")
+    @DisplayName("Test getById and check result is not null")
     void testGetById_AndCheckResultNotNull() {
         String currency = "UAH";
         when(movieRepository.findById(1L)).thenReturn(Optional.ofNullable(movie1));
