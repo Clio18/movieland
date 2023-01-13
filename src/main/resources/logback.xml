@@ -3,11 +3,11 @@
     <property name="LOGS" value="./logs"/>
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>
-                %green(%d) %magenta([%t]) %highlight(%-5level) %cyan(%C{1.}) %magenta(%m%n)
-            </Pattern>
-        </layout>
+        <encoder>
+            <pattern>
+                |%magenta(%-20.20thread)|%highlight(%-5level)|%cyan(%-45.45logger{15}) - %msg%n%throwable
+            </pattern>
+        </encoder>
     </appender>
 
     <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -27,7 +27,7 @@
         <appender-ref ref="RollingFile"/>
     </root>
     <root level="info">
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="Console"/>
     </root>
 
 </configuration>
