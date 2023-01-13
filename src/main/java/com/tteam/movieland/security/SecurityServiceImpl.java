@@ -9,6 +9,7 @@ import com.tteam.movieland.security.model.Credentials;
 import com.tteam.movieland.security.model.SecuredResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,6 +61,8 @@ public class SecurityServiceImpl implements SecurityService {
 
         UserDto dto = mapper.entityToDto(user);
         UUID uuid = UUID.randomUUID();
+        MDC.put("usrEmail", dto.getEmail());
+        MDC.put("usrUUID", uuid.toString());
         cachedUser.put(dto, uuid);
 
         return SecuredResponse
@@ -78,6 +81,7 @@ public class SecurityServiceImpl implements SecurityService {
 
         user.setPassword(encodedPassword);
         userDto.setPassword(encodedPassword);
+        MDC.put("usrEmail", user.getEmail());
         userRepository.save(user);
         return userDto;
     }
