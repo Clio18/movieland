@@ -41,7 +41,7 @@ public class SecurityServiceImpl implements SecurityService {
                 .findFirst()
                 .orElse(null);
 
-        if (userDto!=null && passwordEncoder.matches(passwordRaw, userDto.getPassword())){
+        if (userDto != null && passwordEncoder.matches(passwordRaw, userDto.getPassword())){
             return SecuredResponse
                     .builder()
                     .nickname(userDto.getNickname())
