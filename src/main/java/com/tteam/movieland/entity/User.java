@@ -1,16 +1,23 @@
 package com.tteam.movieland.entity;
 
+import com.tteam.movieland.security.model.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @SequenceGenerator(name = "user_seq")
@@ -26,36 +33,58 @@ public class User {
     @Column(name = "nick_name", length = 100)
     private String nickname;
 
-    public String getNickname() {
-        return nickname;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Transient
+    private Set<? extends GrantedAuthority> grantedAuthorities;
+
+    @Transient
+    private boolean isAccountNonExpired;
+
+    @Transient
+    private boolean isAccountNonLocked;
+
+    @Transient
+    private boolean isCredentialsNonExpired;
+
+    @Transient
+    @Builder.Default
+    private boolean isEnabled = false;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Set.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    @Override
+    public String getUsername() {
+        return email;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getEmail() {
-        return email;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
 }

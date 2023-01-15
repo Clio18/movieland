@@ -1,6 +1,7 @@
 package com.tteam.movieland.controller;
 
 import com.tteam.movieland.entity.Genre;
+import com.tteam.movieland.security.SpringSecurityTestConfig;
 import com.tteam.movieland.service.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -24,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = SpringSecurityTestConfig.class)
 @AutoConfigureMockMvc
 class GenreControllerTest {
 
@@ -48,6 +51,7 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithUserDetails("user@gmail.com")
     @DisplayName("Test GetAllGenres And Check Status Code, Result Size, Fields, Service Method Calling")
     void testGetAllGenresAndCheckStatusSizeFieldsServiceMethodCalling() throws Exception {
         List<Genre> genres = List.of(drama, comedy);
