@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GenreServiceImpl implements GenreService {
+public class GenreServiceDefault implements GenreService {
 
     private final GenreRepository genreRepository;
 
