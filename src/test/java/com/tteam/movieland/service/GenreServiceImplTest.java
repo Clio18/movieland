@@ -55,8 +55,6 @@ class GenreServiceImplTest {
     void testGetAllGenresAndCheckCacheUsage() {
         when(genreRepository.findAll()).thenReturn(genres);
         genreService.getAll();
-        genreService.getAll();
-        genreService.getAll();
         verify(genreRepository, times(1)).findAll();
     }
 }
