@@ -20,14 +20,16 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping
-    protected List<MovieDto> getAll(@RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
+    protected List<MovieDto> getAllSortedByRating(@RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
         List<Movie> sortedMovies = movieService.getAllSortedByRating(sortingOrder);
+
         return sortedMovies.stream().map(mapper::toMovieDto).toList();
     }
 
     @GetMapping("random")
     protected List<MovieDto> getRandomMovie() {
         List<Movie> randomMovies = movieService.getThreeRandom();
+
         return randomMovies.stream().map(mapper::toMovieDto).toList();
     }
 
@@ -35,12 +37,14 @@ public class MovieController {
     protected List<MovieDto> getMoviesByGenreId(@PathVariable Long genreId,
                                                 @RequestParam(value = "rating", defaultValue = "") String sortingOrder) {
         List<Movie> sortedMovies = movieService.getMoviesByGenreSortedByRating(genreId, sortingOrder);
+
         return sortedMovies.stream().map(mapper::toMovieDto).toList();
     }
 
     @GetMapping("/{movieId}")
     protected ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId) {
         Movie movie = movieService.getById(movieId);
+
         MovieDto movieDto = mapper.toMovieDto(movie);
         return ResponseEntity.ok(movieDto);
     }
