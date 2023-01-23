@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url:jdbc:postgresql://localhost:8200/cinema
+    username:postgres
+    password=postgres
+  jpa:
+    show-sql:true
+
+cron:
+  interval:
+    genres:
+      cache: 0 0 */4 * * *
+

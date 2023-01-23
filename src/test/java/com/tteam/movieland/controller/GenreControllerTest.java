@@ -1,5 +1,7 @@
 package com.tteam.movieland.controller;
 
+import com.tteam.movieland.dto.GenreDto;
+import com.tteam.movieland.dto.mapper.EntityMapper;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.service.GenreService;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@WebMvcTest(GenreController.class)
 @AutoConfigureMockMvc
 class GenreControllerTest {
 
@@ -32,10 +34,16 @@ class GenreControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
+    private EntityMapper mapper;
+
+    @MockBean
     private GenreService genreService;
 
     private Genre drama;
     private Genre comedy;
+
+    private GenreDto dramaDto;
+    private GenreDto comedyDto;
 
     @BeforeEach
     void init() {
@@ -45,6 +53,12 @@ class GenreControllerTest {
         comedy = Genre.builder()
                 .genreName("comedy")
                 .build();
+        dramaDto = GenreDto.builder()
+                .genreName("drama")
+                .build();
+        comedyDto = GenreDto.builder()
+                .genreName("comedy")
+                .build();
     }
 
     @Test
@@ -52,6 +66,8 @@ class GenreControllerTest {
     void testGetAllGenresAndCheckStatusSizeFieldsServiceMethodCalling() throws Exception {
         List<Genre> genres = List.of(drama, comedy);
         when(genreService.getAll()).thenReturn(genres);
+        when(mapper.toGenreDto(drama)).thenReturn(dramaDto);
+        when(mapper.toGenreDto(comedy)).thenReturn(comedyDto);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/genres")
                         .accept(MediaType.APPLICATION_JSON))

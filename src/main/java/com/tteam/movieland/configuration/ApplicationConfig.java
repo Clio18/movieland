@@ -9,5 +9,5 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Getter
 @Configuration
 @EnableScheduling
-public class ApiConfig {
+public class ApplicationConfig {
 }
