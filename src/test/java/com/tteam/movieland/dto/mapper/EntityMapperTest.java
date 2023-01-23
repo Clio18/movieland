@@ -1,6 +1,5 @@
 package com.tteam.movieland.dto.mapper;
 
-import com.tteam.movieland.controller.MovieController;
 import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
@@ -8,23 +7,20 @@ import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(MovieController.class)
-@AutoConfigureMockMvc
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 class EntityMapperTest {
 
-    @MockBean
+    @Autowired
     private EntityMapper mapper;
 
     @MockBean
@@ -75,7 +71,7 @@ class EntityMapperTest {
     }
 
     @Test
-    void testToMovieDto() {
+    void testToMovieDtoShouldConvertCorrectly() {
         MovieDto movieDto = mapper.toMovieDto(movie);
         assertEquals(this.movieDto, movieDto);
     }
