@@ -3,31 +3,35 @@
     <property name="LOGS" value="./logs"/>
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>
-                %green(%d) %magenta([%t]) %highlight(%-5level) %cyan(%C{1.}) %magenta(%m%n)
-            </Pattern>
-        </layout>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>
+                %green(%d{HH:mm:ss}) %magenta([%thread]) %highlight(%level) %cyan(%logger{15}) - %msg%n%throwable
+            </pattern>
+        </encoder>
     </appender>
 
     <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOGS}/movieland.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %p %m%n</pattern>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%p] %m%n
+            </pattern>
         </encoder>
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOGS}/movieland-%d{yyyy-MM-dd}.%i.log
+            <fileNamePattern>
+                ${LOGS}/movieland-%d{yyyy-MM-dd}.%i.log
             </fileNamePattern>
             <maxFileSize>5MB</maxFileSize>
         </rollingPolicy>
     </appender>
 
-    <root level="debug">
+    <root level="DEBUG">
+        <appender-ref ref="Console"/>
         <appender-ref ref="RollingFile"/>
-    </root>
-    <root level="info">
-        <appender-ref ref="CONSOLE"/>
     </root>
 
 </configuration>
