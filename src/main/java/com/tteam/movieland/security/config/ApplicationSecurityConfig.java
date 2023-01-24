@@ -15,29 +15,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
-public class ApplicationConfig {
+public class ApplicationSecurityConfig {
+
     private final UserRepository userRepository;
-     @Bean
+
+    @Bean
     public UserDetailsService userDetailsService(){
          return username -> userRepository.findByEmail(username)
                  .orElseThrow(() -> new UserNotFoundException(String.format("User not found by provided email: %s", username)));
-     }
+    }
 
-     @Bean
-     public PasswordEncoder passwordEncoder(){
+    @Bean
+    public PasswordEncoder passwordEncoder(){
          return new BCryptPasswordEncoder();
-     }
+    }
 
-     @Bean
+    @Bean
     public AuthenticationProvider authenticationProvider(){
          DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
          authProvider.setUserDetailsService(userDetailsService());
          authProvider.setPasswordEncoder(passwordEncoder());
          return authProvider;
-     }
+    }
 
-     @Bean
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-         return configuration.getAuthenticationManager();
-     }
+        return configuration.getAuthenticationManager();
+    }
+
+
 }

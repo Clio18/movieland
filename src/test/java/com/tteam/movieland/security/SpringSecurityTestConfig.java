@@ -14,8 +14,10 @@ import java.util.Set;
 
 @TestConfiguration
 public class SpringSecurityTestConfig {
+
     @Bean
-    public UserDetailsService userDetailsService() {
+    @Primary
+    public UserDetailsService defaultUserDetailsService() {
         User admin = User.builder()
                 .nickname("admin")
                 .role(Role.ADMIN)
@@ -41,4 +43,5 @@ public class SpringSecurityTestConfig {
                 admin, user
         ));
     }
+
 }

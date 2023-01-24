@@ -34,12 +34,12 @@ class DbRiderMovieControllerTest {
     @DynamicPropertySource
     public static void overrideProps(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", container::getJdbcUrl);
-        registry.add("spring.datasource.username", container::getUsername);
-        registry.add("spring.datasource.password", container::getPassword);
+        registry.add("spring.datasource.username", () -> "test");
+        registry.add("spring.datasource.password", () -> "test");
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test GetAll Without Parameters")
     void testGetAllWithoutParameters() throws Exception {
         mockMvc.perform( MockMvcRequestBuilders
@@ -109,7 +109,7 @@ class DbRiderMovieControllerTest {
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test GetAll Rating Descending Order")
     void testGetAllDescRating() throws Exception {
         String sortingOrder = "desc";
@@ -118,10 +118,10 @@ class DbRiderMovieControllerTest {
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(2))
-                .andExpect(jsonPath("$[1].id").value(1))
-                .andExpect(jsonPath("$[2].id").value(13))
-                .andExpect(jsonPath("$[3].id").value(4))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[2].id").value(4))
+                .andExpect(jsonPath("$[3].id").value(13))
                 .andExpect(jsonPath("$[4].id").value(3))
                 .andExpect(content()
                         .json("""
@@ -181,7 +181,7 @@ class DbRiderMovieControllerTest {
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test GetAll Rating Ascending Order")
     void testGetAllAscRating() throws Exception {
         String sortingOrder = "asc";
@@ -253,7 +253,7 @@ class DbRiderMovieControllerTest {
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test Get three random movies")
     void testGetThreeRandomMovies() throws Exception {
         mockMvc.perform( MockMvcRequestBuilders
@@ -264,7 +264,7 @@ class DbRiderMovieControllerTest {
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test Get Movies By Genre Id Without Parameters")
     void testGetMoviesByGenreIdWithoutParameters() throws Exception {
         mockMvc.perform( MockMvcRequestBuilders
@@ -312,7 +312,7 @@ class DbRiderMovieControllerTest {
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test Get Movies By Genre Id And Rating Descending")
     void testGetMoviesByGenreIdAndRatingDesc() throws Exception {
         String sortingOrder = "desc";
@@ -362,7 +362,7 @@ class DbRiderMovieControllerTest {
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test Get Movies By Genre Id And Rating Ascending")
     void testGetMoviesByGenreIdAndRatingAsc() throws Exception {
         String sortingOrder = "asc";
@@ -412,7 +412,7 @@ class DbRiderMovieControllerTest {
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test Get Movie By Id")
     void testGetMovieById() throws Exception {
         mockMvc.perform( MockMvcRequestBuilders
@@ -436,7 +436,7 @@ class DbRiderMovieControllerTest {
     }
 
     @Test
-    @DataSet("all_dataset.yml")
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
     @DisplayName("Test Get Movie By Id If Movie Not Found")
     void testGetMovieByIdIfMovieNotFound() throws Exception {
         mockMvc.perform( MockMvcRequestBuilders
@@ -444,4 +444,40 @@ class DbRiderMovieControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
+    @DisplayName("Test Get Movie By Id With Currency Specified")
+    void testGetMovieByIdWithCurrencySpecified() throws Exception {
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/{movieId}?currency={currency}", 1L, "USD")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(content()
+                        .json("""
+                                {
+                                   "id": 1,
+                                   "nameUkr": "Побег из Шоушенка",
+                                   "nameNative": "The Shawshank Redemption",
+                                   "yearOfRelease": 1994,
+                                   "description": "Успешный банкир Энди Дюфрейн обвинен в убийстве собственной жены и ее любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решетки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, вооруженный живым умом и доброй душой, отказывается мириться с приговором судьбы и начинает разрабатывать невероятно дерзкий план своего освобождения.",
+                                   "price": 3.38,
+                                   "rating": 8.9,
+                                   "poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg"
+                               }
+                                """));
+    }
+
+    @Test
+    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = {"flyway_schema_history"})
+    @DisplayName("Test Get Movie By Id With Currency Specified If Currency Not Found")
+    void testGetMovieByIdWithCurrencySpecifiedIfCurrencyNotFound() throws Exception {
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies/{movieId}?currency={currency}", 1L, "GHTR")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+
 }

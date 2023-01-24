@@ -1,7 +1,6 @@
 package com.tteam.movieland.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.util.model.Currency;
 import com.tteam.movieland.util.model.RawCurrency;
 
@@ -14,14 +13,12 @@ public class CurrencyProvider {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final String pathToCurrenciesRatesInJson = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
 
-    public static Movie setPriceInCurrency(Movie movie, String currencyName) {
+    public static double setPriceInCurrency(double initPrice, String currencyName) {
         String currencyChecked = Currency.checkCurrency(currencyName.toUpperCase());
         Currency currency = Currency.valueOf(currencyChecked);
         double rate = getCurrencyRateOnThisDay(currency);
-        double price = movie.getPrice() / rate;
-        double priceRound = (Math.round(price * 100.0) / 100.0);
-        movie.setPrice(priceRound);
-        return movie;
+        double price = initPrice / rate;
+        return (Math.round(price * 100.0) / 100.0);
     }
 
     static double getCurrencyRateOnThisDay(Currency currency) {

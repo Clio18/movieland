@@ -19,11 +19,14 @@ CREATE TABLE genres(
    name VARCHAR(100)
 );
 
+CREATE TYPE role AS ENUM ('ADMIN', 'USER');
+
 CREATE TABLE users(
    id SERIAL PRIMARY KEY,
    nick_name VARCHAR(100),
    email VARCHAR(100),
-   password VARCHAR(100)
+   password VARCHAR(100),
+   role role
 );
 
 CREATE TABLE reviews(

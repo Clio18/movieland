@@ -98,10 +98,11 @@ class MovieServiceDefaultTest {
     }
 
     @Test
-    @DisplayName("test getById and check result is not null")
+    @DisplayName("Test getById and check result is not null")
     void testGetById_AndCheckResultNotNull() {
+        String currency = "UAH";
         when(movieRepository.findById(1L)).thenReturn(Optional.ofNullable(movie1));
-        Movie actualMovie = movieService.getById(1L);
+        Movie actualMovie = movieService.getById(1L, currency);
         assertNotNull(actualMovie);
         assertEquals(movie1, actualMovie);
         verify(movieRepository).findById(1L);

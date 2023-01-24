@@ -3,6 +3,7 @@ package com.tteam.movieland.service;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.MovieRepository;
+import com.tteam.movieland.util.CurrencyProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,9 +22,12 @@ public class MovieServiceDefault implements MovieService {
     }
 
     @Override
-    public Movie getById(Long movieId) {
-        return movieRepository.findById(movieId)
+    public Movie getById(Long movieId, String currency) {
+        Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
+        double price = CurrencyProvider.setPriceInCurrency(movie.getPrice(), currency);
+        movie.setPrice(price);
+        return movie;
     }
 
     @Override
