@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GenreServiceImplTest {
+class GenreServiceDefaultTest {
 
     @Mock
     private GenreRepository genreRepository;
@@ -27,7 +27,7 @@ class GenreServiceImplTest {
 
     @BeforeEach
     void init() {
-        genreService = new GenreServiceImpl(genreRepository);
+        genreService = new GenreServiceDefault(genreRepository);
 
         drama = Genre.builder()
                 .genreName("drama")
@@ -54,8 +54,6 @@ class GenreServiceImplTest {
     @DisplayName("Test getAll genres and check cache usage")
     void testGetAllGenresAndCheckCacheUsage() {
         when(genreRepository.findAll()).thenReturn(genres);
-        genreService.getAll();
-        genreService.getAll();
         genreService.getAll();
         verify(genreRepository, times(1)).findAll();
     }

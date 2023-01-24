@@ -2,9 +2,11 @@ package com.tteam.movieland.dto;
 
 import lombok.*;
 
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 @AllArgsConstructor
 @Builder
 public class MovieDto {

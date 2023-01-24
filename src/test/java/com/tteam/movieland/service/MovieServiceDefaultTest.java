@@ -10,20 +10,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class MovieServiceImplTest {
+class MovieServiceDefaultTest {
 
     @Mock
     private MovieRepository movieRepository;
+    @Mock
+    private Page<Movie> page;
+    @Mock
+    private Stream<Movie> stream;
+
     private MovieService movieService;
     private List<Movie> movies;
     private Movie movie1;
@@ -31,7 +39,7 @@ class MovieServiceImplTest {
 
     @BeforeEach
     void init() {
-        movieService = new MovieServiceImpl(movieRepository);
+        movieService = new MovieServiceDefault(movieRepository);
 
         Country usa = Country.builder()
                 .countryName("usa")
@@ -74,36 +82,26 @@ class MovieServiceImplTest {
         movies = List.of(movie1, movie2);
     }
 
-    @Test
-    @DisplayName("Test getAll and check result is not null, size, content equality, calling the repo's method")
-    void testGetAll_AndCheckResultNotNull_Size_Content_CallingTheRepoMethod() {
-        when(movieRepository.findAll()).thenReturn(movies);
-        List<Movie> actualMovies = movieService.getAll();
-        assertNotNull(actualMovies);
-        assertEquals(2, actualMovies.size());
-        assertEquals(movie1, actualMovies.get(0));
-        assertEquals(movie2, actualMovies.get(1));
-        verify(movieRepository).findAll();
-    }
 
     @Test
-    @DisplayName("Test getMoviesByGenreId and check result is not null, size, content equality, calling the repo's method")
+    @DisplayName("test getMoviesByGenreId and check result is not null, size, content equality, calling the repo's method")
     void testGetMoviesByGenreId_AndCheckResultNotNull_Size_Content_CallingTheRepoMethod() {
-        when(movieRepository.findByGenres_Id(1L)).thenReturn(movies);
+        when(movieRepository.findByGenresId(PageRequest.of(0, 3), 1L)).thenReturn(page);
+        when(page.stream()).thenReturn(stream);
+        when(stream.toList()).thenReturn(movies);
         List<Movie> actualMovies = movieService.getMoviesByGenreId(1L);
         assertNotNull(actualMovies);
         assertEquals(2, actualMovies.size());
         assertEquals(movie1, actualMovies.get(0));
         assertEquals(movie2, actualMovies.get(1));
-        verify(movieRepository).findByGenres_Id(1L);
+        verify(movieRepository).findByGenresId(PageRequest.of(0, 3), 1L);
     }
 
     @Test
-    @DisplayName("Test getById and check result is not null")
+    @DisplayName("test getById and check result is not null")
     void testGetById_AndCheckResultNotNull() {
-        String currency = "UAH";
         when(movieRepository.findById(1L)).thenReturn(Optional.ofNullable(movie1));
-        Movie actualMovie = movieService.getById(1L, currency);
+        Movie actualMovie = movieService.getById(1L);
         assertNotNull(actualMovie);
         assertEquals(movie1, actualMovie);
         verify(movieRepository).findById(1L);
