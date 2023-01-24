@@ -1,10 +1,13 @@
 spring:
   datasource:
-    url:jdbc:postgresql://localhost:8200/cinema
-    username:postgres
-    password=postgres
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:8200/cinema
+    username: postgres
+    password: postgres
+
   jpa:
-    show-sql:true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
 
 cron:
   interval:

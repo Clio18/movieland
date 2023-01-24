@@ -12,7 +12,7 @@ import java.util.List;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class CachedGenreRepository implements GenreRepository{
+public class CachedGenreRepository implements GenreRepository {
 
     private final JpaGenreRepository jpaGenreRepository;
     private List<Genre> cachedGenreList;

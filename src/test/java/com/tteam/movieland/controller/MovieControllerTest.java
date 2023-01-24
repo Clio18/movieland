@@ -147,7 +147,7 @@ class MovieControllerTest {
 
     @Test
     @DisplayName("""
-    Test GetAll Rating Descending Order And Check Status Code, Result Size, Fields,
+    Test GetAll Rating Ascending Order And Check Status Code, Result Size, Fields,
     Service Method Calling""")
     void testGetAllAscRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie2, movie1);

@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface EntityMapper {
+
     MovieDto toMovieDto(Movie movie);
     GenreDto toGenreDto(Genre movie);
 }

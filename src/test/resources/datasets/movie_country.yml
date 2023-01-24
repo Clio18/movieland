@@ -1,0 +1,106 @@
+MOVIE_COUNTRY:
+   -
+      movie_id: 1
+      country_id: 1
+   -
+      movie_id: 2
+      country_id: 1
+   -
+      movie_id: 3
+      country_id: 1
+   -
+      movie_id: 4
+      country_id: 1
+   -
+      movie_id: 5
+      country_id: 2
+   -
+      movie_id: 6
+      country_id: 1
+   -
+      movie_id: 6
+      country_id: 3
+   -
+      movie_id: 7
+      country_id: 4
+   -
+      movie_id: 8
+      country_id: 1
+   -
+      movie_id: 8
+      country_id: 5
+   -
+      movie_id: 9
+      country_id: 1
+   -
+      movie_id: 10
+      country_id: 1
+   -
+      movie_id: 11
+      country_id: 6
+   -
+      movie_id: 12
+      country_id: 1
+   -
+      movie_id: 13
+      country_id: 1
+   -
+      movie_id: 14
+      country_id: 6
+   -
+      movie_id: 15
+      country_id: 1
+   -
+      movie_id: 15
+      country_id: 3
+   -
+      movie_id: 16
+      country_id: 1
+   -
+      movie_id: 16
+      country_id: 3
+   -
+      movie_id: 17
+      country_id: 1
+   -
+      movie_id: 17
+      country_id: 3
+   -
+      movie_id: 18
+      country_id: 1
+   -
+      movie_id: 19
+      country_id: 1
+   -
+      movie_id: 20
+      country_id: 1
+   -
+      movie_id: 20
+      country_id: 5
+   -
+      movie_id: 21
+      country_id: 7
+   -
+      movie_id: 21
+      country_id: 4
+   -
+      movie_id: 21
+      country_id: 1
+   -
+      movie_id: 21
+      country_id: 5
+   -
+      movie_id: 22
+      country_id: 4
+   -
+      movie_id: 23
+      country_id: 4
+   -
+      movie_id: 24
+      country_id: 1
+   -
+      movie_id: 25
+      country_id: 1
+   -
+      movie_id: 25
+      country_id: 3

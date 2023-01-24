@@ -1,0 +1,51 @@
+USERS:
+  -
+    id: 1
+    nick_name: "Рональд Рейнольдс"
+    email: "ronald.reynolds66@example.com"
+    password: "$2a$10$xeB1ty.DEECXX.R8YOYSn.w6xie78qsRges0NC7bNxnglO9uhjsUC"
+  -
+    id: 2
+    nick_name: "Дарлин Эдвардс"
+    email: "darlene.edwards15@example.com"
+    password: "$2a$10$c4qJq5Q3eo.KkFnw7MyWp.pO/Ki9mpYIdq4lOvun8O2aOrr9wxdbW"
+  -
+    id: 3
+    nick_name: "Габриэль Джексон"
+    email: "gabriel.jackson91@example.com"
+    password: "$2a$10$dZqrCpHwRjD7yNbrFdHEpef5kR8RkIFTIICZwHaZQi/ZM5FLBo6Gi"
+  -
+    id: 4
+    nick_name: "Дэрил Брайант"
+    email: "daryl.bryant94@example.com"
+    password: "$2a$10$qhBpbeXHNCQyJe.hC6jcOe2a6ebvwqvfGWpG9EJHIN2YGBUBfwZT6"
+  -
+    id: 5
+    nick_name: "Нил Паркер"
+    email: "neil.parker43@example.com"
+    password: "$2a$10$tR/yNdlEuV/x3eFxOSa/ZOIdb67YAPioJAZZsr51SYexeQNvKFK2e"
+  -
+    id: 6
+    nick_name: "Трэвис Райт"
+    email: "travis.wright36@example.com"
+    password: "$2a$10$gmZHRNK28O8oPQRn62pfteHcUtGc4lZUCi32fsOETVu8LU01Thvau"
+  -
+    id: 7
+    nick_name: "Амелия Кэннеди"
+    email: "amelia.kennedy58@example.com"
+    password: "$2a$10$SESDcB5gT1.vgBH3BavGfOOZ4AWiLZdz78rL9HLh9/baA0h528Ex2"
+  -
+    id: 8
+    nick_name: "Айда Дэвис"
+    email: "ida.davis80@example.com"
+    password: "$2a$10$cAVyVWwiGvabpytvzYEE4e56178wr6lHTHStxKfCDjEjX0346Vjcm"
+  -
+    id: 9
+    nick_name: "Джесси Паттерсон"
+    email: "jessie.patterson68@example.com"
+    password: "$2a$10$zZ/ow5I0mLXEdtAgkiZ4..t3yCMRF.AUfFodYdMF6tYZIcVVcAcRu"
+  -
+    id: 10
+    nick_name: "Деннис Крейг"
+    email: "dennis.craig82@example.com"
+    password: "$2a$10$qY1c311aBvo/8gfvEC1Rru3hbS5v/x9jU1s/VR.5kHK960ymefNT2"
