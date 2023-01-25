@@ -20,6 +20,9 @@ public class CachedGenreRepository implements GenreRepository {
     @Override
     public List<Genre> findAll() {
         log.info("Get cached genres list.");
+        if (cachedGenreList.isEmpty()) {
+            updateGenresCache();
+        }
         return cachedGenreList;
     }
 
