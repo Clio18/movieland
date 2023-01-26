@@ -1,5 +1,6 @@
 package com.tteam.movieland.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tteam.movieland.security.model.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,12 +12,12 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
-@Builder
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
@@ -35,6 +36,11 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @JsonIgnore
+    @OneToMany(mappedBy="user")
+    @ToString.Exclude
+    private Set<Review> reviews;
 
     @Transient
     private Set<? extends GrantedAuthority> grantedAuthorities;
@@ -86,5 +92,15 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", role=" + role +
+                '}';
     }
 }
