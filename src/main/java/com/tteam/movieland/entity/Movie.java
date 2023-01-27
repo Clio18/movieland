@@ -71,6 +71,9 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy="movie")
+    private Set<Review> reviews;
+
     public Set<String> getGenres() {
         return genres.stream().map(Genre::getGenreName).collect(Collectors.toSet());
     }

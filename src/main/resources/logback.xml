@@ -17,7 +17,7 @@
         <file>${LOGS}/movieland.log</file>
         <encoder>
             <pattern>
-                %d{yyyy-MM-dd HH:mm:ss} [%thread] [%p] %m%n
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] %X{userUUID} %X{userEmail} [%p] %m%n
             </pattern>
         </encoder>
         <rollingPolicy

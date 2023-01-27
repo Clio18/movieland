@@ -31,8 +31,8 @@ CREATE TABLE users(
 
 CREATE TABLE reviews(
    id SERIAL PRIMARY KEY,
-   movie_name VARCHAR(100),
-   user_nick_name VARCHAR(100),
+   movie_id BIGINT,
+   user_id BIGINT,
    content TEXT
 );
 
@@ -66,10 +66,10 @@ ALTER TABLE movie_genre ADD CONSTRAINT genre_id FOREIGN KEY (genre_id) REFERENCE
 ALTER TABLE movie_genre ADD CONSTRAINT movie_id FOREIGN KEY (movie_id) REFERENCES movies (id);
 ALTER TABLE movie_country ADD CONSTRAINT country_id FOREIGN KEY (country_id) REFERENCES countries (id);
 ALTER TABLE movie_country ADD CONSTRAINT movie_id FOREIGN KEY (movie_id) REFERENCES movies (id);
+ALTER TABLE reviews ADD CONSTRAINT FK_REVIEWS_ON_MOVIE FOREIGN KEY (movie_id) REFERENCES movies (id);
+ALTER TABLE reviews ADD CONSTRAINT FK_REVIEWS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
 
 DROP SEQUENCE movie_country_country_id_seq CASCADE;
 DROP SEQUENCE movie_country_movie_id_seq CASCADE;
 DROP SEQUENCE movie_genre_genre_id_seq CASCADE;
 DROP SEQUENCE movie_genre_movie_id_seq CASCADE;
-
-
