@@ -1,5 +1,7 @@
 package com.tteam.movieland.controller;
 
+import com.tteam.movieland.dto.GenreDto;
+import com.tteam.movieland.dto.mapper.EntityMapper;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.security.SpringSecurityTestConfig;
 import com.tteam.movieland.service.GenreService;
@@ -35,10 +37,16 @@ class GenreControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
+    private EntityMapper mapper;
+
+    @MockBean
     private GenreService genreService;
 
     private Genre drama;
     private Genre comedy;
+
+    private GenreDto dramaDto;
+    private GenreDto comedyDto;
 
     @BeforeEach
     void init() {
@@ -46,6 +54,12 @@ class GenreControllerTest {
                 .genreName("drama")
                 .build();
         comedy = Genre.builder()
+                .genreName("comedy")
+                .build();
+        dramaDto = GenreDto.builder()
+                .genreName("drama")
+                .build();
+        comedyDto = GenreDto.builder()
                 .genreName("comedy")
                 .build();
     }
@@ -56,6 +70,8 @@ class GenreControllerTest {
     void testGetAllGenresAndCheckStatusSizeFieldsServiceMethodCalling() throws Exception {
         List<Genre> genres = List.of(drama, comedy);
         when(genreService.getAll()).thenReturn(genres);
+        when(mapper.toGenreDto(drama)).thenReturn(dramaDto);
+        when(mapper.toGenreDto(comedy)).thenReturn(comedyDto);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/genres")
                         .accept(MediaType.APPLICATION_JSON))

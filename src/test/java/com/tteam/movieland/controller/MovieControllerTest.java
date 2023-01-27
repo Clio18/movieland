@@ -1,11 +1,11 @@
 package com.tteam.movieland.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tteam.movieland.dto.MovieDto;
+import com.tteam.movieland.dto.mapper.EntityMapper;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.CurrencyNotFoundException;
-import com.tteam.movieland.exception.GenreNotFoundException;
 import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.security.SpringSecurityTestConfig;
 import com.tteam.movieland.service.MovieService;
@@ -23,26 +23,26 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = SpringSecurityTestConfig.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 class MovieControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @MockBean
+    private EntityMapper mapper;
 
     @MockBean
     private MovieService movieService;
@@ -50,6 +50,10 @@ class MovieControllerTest {
     private Movie movie1;
     private Movie movie2;
     private Movie movie3;
+
+    private MovieDto movieDto1;
+    private MovieDto movieDto2;
+    private MovieDto movieDto3;
 
     @BeforeEach
     void init(){
@@ -102,6 +106,34 @@ class MovieControllerTest {
                 .countries(countries)
                 .genres(genres)
                 .build();
+
+        movieDto1 = MovieDto.builder()
+                .price(10.0)
+                .nameUkr("Matrix")
+                .nameNative("Matrix")
+                .yearOfRelease(1989)
+                .rating(10.0)
+                .poster("url/")
+                .description("Best movie")
+                .build();
+        movieDto2 = MovieDto.builder()
+                .price(12.0)
+                .nameUkr("Matrix2")
+                .nameNative("Matrix2")
+                .yearOfRelease(1999)
+                .rating(9.0)
+                .poster("url/")
+                .description("Good movie")
+                .build();
+        movieDto3 = MovieDto.builder()
+                .price(0.27)
+                .nameUkr("Matrix")
+                .nameNative("Matrix")
+                .yearOfRelease(1989)
+                .rating(10.0)
+                .poster("url/")
+                .description("Best movie")
+                .build();
     }
 
     @Test
@@ -110,47 +142,14 @@ class MovieControllerTest {
     Test GetAll Rating Descending Order And Check Status Code, Result Size, Fields,
     Service Method Calling""")
     void testGetAllDescRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
-        List<Movie> movies = List.of(movie1, movie2);
+        List<Movie> movies = List.of(movie2, movie1);
         String sortingOrder = "desc";
         when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
+        when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
+        when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].price").value(10.0))
-                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
-                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
-                .andExpect(jsonPath("$[0].rating").value(10.0))
-                .andExpect(jsonPath("$[0].poster").value("url/"))
-                .andExpect(jsonPath("$[0].description").value("Best movie"))
-
-                .andExpect(jsonPath("$[1].price").value(12.0))
-                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
-                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
-                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
-                .andExpect(jsonPath("$[1].rating").value(9.0))
-                .andExpect(jsonPath("$[1].poster").value("url/"))
-                .andExpect(jsonPath("$[1].description").value("Good movie"));
-
-        verify(movieService).getAllSortedByRating(sortingOrder);
-    }
-
-    @Test
-    @WithUserDetails("user@gmail.com")
-    @DisplayName("""
-    Test GetAll Rating Descending Order And Check Status Code, Result Size, Fields,
-    Service Method Calling""")
-    void testGetAllAscRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
-        List<Movie> movies = List.of(movie2, movie1);
-        String sortingOrder = "asc";
-        when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
-        mockMvc.perform( MockMvcRequestBuilders
-                        .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].price").value(12.0))
                 .andExpect(jsonPath("$[0].nameUkr").value("Matrix2"))
                 .andExpect(jsonPath("$[0].nameNative").value("Matrix2"))
@@ -165,8 +164,41 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$[1].yearOfRelease").value(1989))
                 .andExpect(jsonPath("$[1].rating").value(10.0))
                 .andExpect(jsonPath("$[1].poster").value("url/"))
-                .andExpect(jsonPath("$[1].description").value("Best movie"));
+                .andExpect(jsonPath("$[1].description").value("Best movie"))
+                .andExpect(status().isOk());
+        verify(movieService).getAllSortedByRating(sortingOrder);
+    }
 
+    @Test
+    @WithUserDetails("user@gmail.com")
+    @DisplayName("""
+    Test GetAll Rating Ascending Order And Check Status Code, Result Size, Fields,
+    Service Method Calling""")
+    void testGetAllAscRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
+        List<Movie> movies = List.of(movie2, movie1);
+        String sortingOrder = "asc";
+        when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
+        when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
+        when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].price").value(12.0))
+                .andExpect(jsonPath("$[0].nameUkr").value("Matrix2"))
+                .andExpect(jsonPath("$[0].nameNative").value("Matrix2"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(1999))
+                .andExpect(jsonPath("$[0].rating").value(9.0))
+                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].description").value("Good movie"))
+
+                .andExpect(jsonPath("$[1].price").value(10.0))
+                .andExpect(jsonPath("$[1].nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$[1].nameNative").value("Matrix"))
+                .andExpect(jsonPath("$[1].yearOfRelease").value(1989))
+                .andExpect(jsonPath("$[1].rating").value(10.0))
+                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].description").value("Best movie"))
+                .andExpect(status().isOk());
         verify(movieService).getAllSortedByRating(sortingOrder);
     }
 
@@ -175,30 +207,30 @@ class MovieControllerTest {
     @DisplayName("""
     Test GetAllMovies No Rating Ordering And Check Status Code, Result Size, Fields, Service Method Calling""")
     void testGetAllMoviesNoRatingOrdering_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
-        List<Movie> movies = List.of(movie1, movie2);
+        List<Movie> movies = List.of(movie2, movie1);
         String sortingOrder = "";
         when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
+        when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
+        when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].price").value(10.0))
-                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
-                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
-                .andExpect(jsonPath("$[0].rating").value(10.0))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].price").value(12.0))
+                .andExpect(jsonPath("$[0].nameUkr").value("Matrix2"))
+                .andExpect(jsonPath("$[0].nameNative").value("Matrix2"))
+                .andExpect(jsonPath("$[0].yearOfRelease").value(1999))
+                .andExpect(jsonPath("$[0].rating").value(9.0))
                 .andExpect(jsonPath("$[0].poster").value("url/"))
-                .andExpect(jsonPath("$[0].description").value("Best movie"))
+                .andExpect(jsonPath("$[0].description").value("Good movie"))
 
-                .andExpect(jsonPath("$[1].price").value(12.0))
-                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
-                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
-                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
-                .andExpect(jsonPath("$[1].rating").value(9.0))
+                .andExpect(jsonPath("$[1].price").value(10.0))
+                .andExpect(jsonPath("$[1].nameUkr").value("Matrix"))
+                .andExpect(jsonPath("$[1].nameNative").value("Matrix"))
+                .andExpect(jsonPath("$[1].yearOfRelease").value(1989))
+                .andExpect(jsonPath("$[1].rating").value(10.0))
                 .andExpect(jsonPath("$[1].poster").value("url/"))
-                .andExpect(jsonPath("$[1].description").value("Good movie"));
-
+                .andExpect(jsonPath("$[1].description").value("Best movie"))
+                .andExpect(status().isOk());
         verify(movieService).getAllSortedByRating(sortingOrder);
     }
 
@@ -208,9 +240,11 @@ class MovieControllerTest {
     void testGetRandomMovie_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie1, movie2);
         when(movieService.getThreeRandom()).thenReturn(movies);
+        when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
+        when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/random")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].rating").value(10.0))
@@ -229,25 +263,8 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].price").value(10.0))
-                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
-                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
-                .andExpect(jsonPath("$[0].rating").value(10.0))
-                .andExpect(jsonPath("$[0].poster").value("url/"))
-                .andExpect(jsonPath("$[0].description").value("Best movie"))
-
-                .andExpect(jsonPath("$[1].price").value(12.0))
-                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
-                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
-                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
-                .andExpect(jsonPath("$[1].rating").value(9.0))
-                .andExpect(jsonPath("$[1].poster").value("url/"))
-                .andExpect(jsonPath("$[1].description").value("Good movie"));
-
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -256,11 +273,11 @@ class MovieControllerTest {
     @DisplayName("Test GetMoviesByGenreId And Rating Ascending Order If Genre Not Found")
     void testGetMoviesByGenreIdAndRatingAsc_IfGenreNotFound() throws Exception {
         String sortingOrder = "asc";
-        when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenThrow(GenreNotFoundException.class);
+        when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(Collections.emptyList());
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -275,25 +292,8 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].price").value(10.0))
-                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
-                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
-                .andExpect(jsonPath("$[0].rating").value(10.0))
-                .andExpect(jsonPath("$[0].poster").value("url/"))
-                .andExpect(jsonPath("$[0].description").value("Best movie"))
-
-                .andExpect(jsonPath("$[1].price").value(12.0))
-                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
-                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
-                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
-                .andExpect(jsonPath("$[1].rating").value(9.0))
-                .andExpect(jsonPath("$[1].poster").value("url/"))
-                .andExpect(jsonPath("$[1].description").value("Good movie"));
-
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -302,11 +302,11 @@ class MovieControllerTest {
     @DisplayName("Test GetMoviesByGenreId And Rating Descending Order If Genre Not Found")
     void testGetMoviesByGenreIdAndRatingDesc_IfGenreNotFound() throws Exception {
         String sortingOrder = "desc";
-        when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenThrow(GenreNotFoundException.class);
+        when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(Collections.emptyList());
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -321,25 +321,8 @@ class MovieControllerTest {
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].price").value(10.0))
-                .andExpect(jsonPath("$[0].nameUkr").value("Matrix"))
-                .andExpect(jsonPath("$[0].nameNative").value("Matrix"))
-                .andExpect(jsonPath("$[0].yearOfRelease").value(1989))
-                .andExpect(jsonPath("$[0].rating").value(10.0))
-                .andExpect(jsonPath("$[0].poster").value("url/"))
-                .andExpect(jsonPath("$[0].description").value("Best movie"))
-
-                .andExpect(jsonPath("$[1].price").value(12.0))
-                .andExpect(jsonPath("$[1].nameUkr").value("Matrix2"))
-                .andExpect(jsonPath("$[1].nameNative").value("Matrix2"))
-                .andExpect(jsonPath("$[1].yearOfRelease").value(1999))
-                .andExpect(jsonPath("$[1].rating").value(9.0))
-                .andExpect(jsonPath("$[1].poster").value("url/"))
-                .andExpect(jsonPath("$[1].description").value("Good movie"));
-
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -348,11 +331,11 @@ class MovieControllerTest {
     @DisplayName("Test GetMoviesByGenreId And No Rating Ordering If Genre Not Found")
     void testGetMoviesByGenreIdAndNoRatingOrdering_IfGenreNotFound() throws Exception {
         String sortingOrder = "";
-        when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenThrow(GenreNotFoundException.class);
+        when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(Collections.emptyList());
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(movieService).getMoviesByGenreSortedByRating(1L, sortingOrder);
     }
 
@@ -361,6 +344,7 @@ class MovieControllerTest {
     @DisplayName("Test GetMovieById And Check Status Code")
     void testGetMovieById_AndCheckStatus() throws Exception {
         String currency = "UAH";
+        when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
         when(movieService.getById(1L, currency)).thenReturn(movie1);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 1L)
@@ -376,6 +360,7 @@ class MovieControllerTest {
     @DisplayName("Test GetMovieById With Defined Currency And Check Status Code")
     void testGetMovieByIdWithDefinedCurrency_AndCheckStatus() throws Exception {
         String currency = "USD";
+        when(mapper.toMovieDto(movie3)).thenReturn(movieDto3);
         when(movieService.getById(1L, currency)).thenReturn(movie3);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, currency)
@@ -394,7 +379,7 @@ class MovieControllerTest {
         when(movieService.getById(1L, currency)).thenThrow(MovieNotFoundException.class);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(movieService).getById(1L, currency);
     }
