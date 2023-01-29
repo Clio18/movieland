@@ -1,6 +1,9 @@
 package com.tteam.movieland;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -17,21 +20,17 @@ import java.util.Objects;
 
 @SpringBootTest
 @Testcontainers
+@DirtiesContext
+@ActiveProfiles("test")
 public class AbstractBaseITest {
-
 	@Container
-	private static final PostgreSQLContainer<?> container;
-
-	static {
-		container = new PostgreSQLContainer<>("postgres:latest");
-		container.start();
-	}
+	private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:latest");
 
 	@DynamicPropertySource
 	public static void overrideProps(DynamicPropertyRegistry registry) {
 		registry.add("spring.datasource.url", container::getJdbcUrl);
-		registry.add("spring.datasource.username", () -> "test");
-		registry.add("spring.datasource.password", () -> "test");
+		registry.add("spring.datasource.username", container::getUsername);
+		registry.add("spring.datasource.password", container::getPassword);
 	}
 
 	protected String getResponseAsString(String jsonPath) {

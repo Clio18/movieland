@@ -10,6 +10,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -25,7 +33,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test GetAll Without Parameters")
     void testGetAllWithoutParameters() throws Exception {
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -42,7 +50,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DisplayName("Test GetAll Rating Descending Order")
     void testGetAllDescRating() throws Exception {
         String sortingOrder = "desc";
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -60,7 +68,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DisplayName("Test GetAll Rating Ascending Order")
     void testGetAllAscRating() throws Exception {
         String sortingOrder = "asc";
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -77,7 +85,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test Get three random movies")
     void testGetThreeRandomMovies() throws Exception {
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/random")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -88,7 +96,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test Get Movies By Genre Id Without Parameters")
     void testGetMoviesByGenreIdWithoutParameters() throws Exception {
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -103,7 +111,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DisplayName("Test Get Movies By Genre Id And Rating Descending")
     void testGetMoviesByGenreIdAndRatingDesc() throws Exception {
         String sortingOrder = "desc";
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1, sortingOrder)
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -119,7 +127,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DisplayName("Test Get Movies By Genre Id And Rating Ascending")
     void testGetMoviesByGenreIdAndRatingAsc() throws Exception {
         String sortingOrder = "asc";
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1, sortingOrder)
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -134,7 +142,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test Get Movie By Id")
     void testGetMovieById() throws Exception {
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -146,7 +154,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test Get Movie By Id If Movie Not Found")
     void testGetMovieByIdIfMovieNotFound() throws Exception {
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 100)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -156,7 +164,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test Get Movie By Id With Currency Specified")
     void testGetMovieByIdWithCurrencySpecified() throws Exception {
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, "USD")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -168,10 +176,20 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test Get Movie By Id With Currency Specified If Currency Not Found")
     void testGetMovieByIdWithCurrencySpecifiedIfCurrencyNotFound() throws Exception {
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, "GHTR")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    protected String getResponseAsString(String jsonPath) {
+        URL resource = getClass().getClassLoader().getResource(jsonPath);
+        try {
+            File file = new File(Objects.requireNonNull(resource).toURI());
+            return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException("Unable to find file: " + jsonPath);
+        }
     }
 
 

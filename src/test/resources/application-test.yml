@@ -5,19 +5,13 @@ spring:
     username: postgres
     password: postgres
 
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-    hibernate:
-      ddl-auto: none
-
-
-application:
-  jwtSecretKey: 2A462D4A614E635266556A586E3272357538782F413F4428472B4B6250655367
-  jwTokenPrefix: Bearer
-  jwTokenExpirationAfterHours: 24
 
 cron:
   interval:
     genres:
       cache: 0 0 */4 * * *
+
