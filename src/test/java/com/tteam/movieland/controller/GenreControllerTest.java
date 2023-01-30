@@ -1,7 +1,7 @@
 package com.tteam.movieland.controller;
 
 import com.tteam.movieland.dto.GenreDto;
-import com.tteam.movieland.dto.mapper.EntityMapper;
+import com.tteam.movieland.dto.mapper.GenreMapper;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.security.SpringSecurityTestConfig;
 import com.tteam.movieland.service.GenreService;
@@ -37,7 +37,7 @@ class GenreControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private EntityMapper mapper;
+    private GenreMapper mapper;
 
     @MockBean
     private GenreService genreService;

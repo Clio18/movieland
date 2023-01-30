@@ -6,6 +6,7 @@ import com.tteam.movieland.entity.*;
 import com.tteam.movieland.exception.ReviewNotFoundException;
 import com.tteam.movieland.repository.ReviewRepository;
 import com.tteam.movieland.request.ReviewRequest;
+import com.tteam.movieland.service.impl.ReviewServiceDefault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

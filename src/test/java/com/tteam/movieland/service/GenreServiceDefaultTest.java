@@ -2,6 +2,7 @@ package com.tteam.movieland.service;
 
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.repository.GenreRepository;
+import com.tteam.movieland.service.impl.GenreServiceDefault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

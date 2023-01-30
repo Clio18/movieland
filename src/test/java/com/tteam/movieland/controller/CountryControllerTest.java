@@ -1,7 +1,7 @@
 package com.tteam.movieland.controller;
 
 import com.tteam.movieland.dto.CountryDto;
-import com.tteam.movieland.dto.mapper.EntityMapper;
+import com.tteam.movieland.dto.mapper.CountryMapper;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.security.SpringSecurityTestConfig;
 import com.tteam.movieland.service.CountryService;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -40,7 +39,7 @@ class CountryControllerTest {
     private CountryService countryService;
 
     @MockBean
-    private EntityMapper entityMapper;
+    private CountryMapper entityMapper;
 
     private List<Country> countryList;
     private Country country1;

@@ -1,7 +1,8 @@
-package com.tteam.movieland.service;
+package com.tteam.movieland.service.impl;
 
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.repository.CountryRepository;
+import com.tteam.movieland.service.CountryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

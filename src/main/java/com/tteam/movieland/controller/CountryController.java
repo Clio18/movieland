@@ -1,7 +1,7 @@
 package com.tteam.movieland.controller;
 
 import com.tteam.movieland.dto.CountryDto;
-import com.tteam.movieland.dto.mapper.EntityMapper;
+import com.tteam.movieland.dto.mapper.CountryMapper;
 import com.tteam.movieland.service.CountryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class CountryController {
 
     private final CountryService countryService;
-    private final EntityMapper entityMapper;
+    private final CountryMapper entityMapper;
 
     @GetMapping("country")
     protected List<CountryDto> getAll(){

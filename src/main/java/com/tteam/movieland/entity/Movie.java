@@ -11,7 +11,6 @@ import org.hibernate.type.SqlTypes;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -49,8 +48,6 @@ public class Movie {
     private Double rating;
 
     @Fetch(FetchMode.SUBSELECT)
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "movie_country",
@@ -62,8 +59,6 @@ public class Movie {
     private String poster;
 
     @Fetch(FetchMode.SUBSELECT)
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "movie_genre",
@@ -73,14 +68,6 @@ public class Movie {
 
     @OneToMany(mappedBy="movie")
     private Set<Review> reviews;
-
-    public Set<String> getGenres() {
-        return genres.stream().map(Genre::getGenreName).collect(Collectors.toSet());
-    }
-
-    public Set<String> getCountries() {
-        return countries.stream().map(Country::getCountryName).collect(Collectors.toSet());
-    }
 
     @Override
     public boolean equals(Object o) {

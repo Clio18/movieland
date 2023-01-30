@@ -1,8 +1,9 @@
 package com.tteam.movieland.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;;
-import com.tteam.movieland.AbstractBaseITest;
+import com.tteam.movieland.AbstractBaseITest;;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,6 +21,9 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     @Test
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
@@ -181,16 +177,4 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
-    protected String getResponseAsString(String jsonPath) {
-        URL resource = getClass().getClassLoader().getResource(jsonPath);
-        try {
-            File file = new File(Objects.requireNonNull(resource).toURI());
-            return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException("Unable to find file: " + jsonPath);
-        }
-    }
-
-
 }
