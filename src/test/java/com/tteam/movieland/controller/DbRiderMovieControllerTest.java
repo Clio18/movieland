@@ -2,8 +2,10 @@ package com.tteam.movieland.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;;
 import com.tteam.movieland.AbstractBaseITest;;
+import com.tteam.movieland.dto.MovieDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -51,10 +55,10 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[2].id").value(4))
-                .andExpect(jsonPath("$[3].id").value(13))
+                .andExpect(jsonPath("$[0].id").value(2))
+                .andExpect(jsonPath("$[1].id").value(1))
+                .andExpect(jsonPath("$[2].id").value(13))
+                .andExpect(jsonPath("$[3].id").value(4))
                 .andExpect(jsonPath("$[4].id").value(3))
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-desc-rating.json")));
     }
@@ -176,5 +180,50 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, "GHTR")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DataSet(value = "datasets/movie/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
+    @ExpectedDataSet(value = "datasets/movie/movies_after_add.yml", ignoreCols = "id")
+    @DisplayName("Test add movie")
+    void whenAdd_thenCorrectJsonReturned() throws Exception {
+        MovieDto movieDto = MovieDto.builder()
+                .nameUkr("Вищий пілотаж")
+                .nameNative("Devotion")
+                .yearOfRelease(2022)
+                .description("Через початок корейської війни американські пілоти змушені знову підняти в небо своїх вірних бойових птахів")
+                .price(150.87)
+                .poster("https://uakino.club/uploads/mini/poster/b2/c7e758be3159ff0a1d05a1205f91c7.jpg")
+                .countriesId(Set.of(1L))
+                .genresId(Set.of(1L))
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/movies/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(movieDto))
+                        .characterEncoding("utf-8")
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DataSet(value = "datasets/movie/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
+    @ExpectedDataSet(value = "datasets/movie/movies_after_update.yml", ignoreCols = "id")
+    @DisplayName("Test update movie")
+    void whenUpdate_thenCorrectJsonReturned() throws Exception {
+        MovieDto movieDto = MovieDto.builder()
+                .nameUkr("Вищий пілотаж")
+                .nameNative("Devotion")
+                .poster("https://uakino.club/uploads/mini/poster/b2/c7e758be3159ff0a1d05a1205f91c7.jpg")
+                .countriesId(Set.of(1L))
+                .genresId(Set.of(1L))
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/movies/{movieId}", 2L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(movieDto))
+                        .characterEncoding("utf-8")
+                )
+                .andExpect(status().isOk());
     }
 }

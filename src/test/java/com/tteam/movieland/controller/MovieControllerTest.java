@@ -1,6 +1,10 @@
 package com.tteam.movieland.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tteam.movieland.dto.CountryDto;
+import com.tteam.movieland.dto.GenreDto;
 import com.tteam.movieland.dto.MovieDto;
+import com.tteam.movieland.dto.MovieWithCountriesAndGenresDto;
 import com.tteam.movieland.dto.mapper.MovieMapper;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
@@ -46,6 +50,9 @@ class MovieControllerTest {
     @MockBean
     private MovieService movieService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private Movie movie1;
     private Movie movie2;
     private Movie movie3;
@@ -53,6 +60,8 @@ class MovieControllerTest {
     private MovieDto movieDto1;
     private MovieDto movieDto2;
     private MovieDto movieDto3;
+
+    private MovieWithCountriesAndGenresDto movieWithCountriesAndGenresDto;
 
     @BeforeEach
     void init(){
@@ -132,6 +141,24 @@ class MovieControllerTest {
                 .rating(10.0)
                 .poster("url/")
                 .description("Best movie")
+                .build();
+        movieWithCountriesAndGenresDto = MovieWithCountriesAndGenresDto.builder()
+                .price(0.27)
+                .nameUkr("Matrix")
+                .nameNative("Matrix")
+                .yearOfRelease(1989)
+                .rating(10.0)
+                .poster("url/")
+                .description("Best movie")
+                .countriesDto(Set.of(
+                        CountryDto.builder().countryName("usa").build(),
+                        CountryDto.builder().countryName("ukraine").build()
+                ))
+                .genresDto(Set.of(
+                        GenreDto.builder().genreName("comedy").build(),
+                        GenreDto.builder().genreName("love").build(),
+                        GenreDto.builder().genreName("drama").build()
+                ))
                 .build();
     }
 
@@ -394,5 +421,35 @@ class MovieControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(movieService).getById(1L, currency);
+    }
+
+    @Test
+    @WithUserDetails("user@gmail.com")
+    @DisplayName("Test Save And Check Status Code")
+    void testSave_AndCheckStatus() throws Exception {
+        when(movieService.saveMovieWithGenresAndCountries(movieDto1)).thenReturn(movieWithCountriesAndGenresDto);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .post("/api/v1/movies/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString((movieDto1))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nameNative").value("Matrix"))
+                .andExpect(jsonPath("$.price").value(0.27));
+        verify(movieService).saveMovieWithGenresAndCountries(movieDto1);
+    }
+
+    @Test
+    @WithUserDetails("user@gmail.com")
+    @DisplayName("Test Update And Check Status Code")
+    void testUpdate_AndCheckStatus() throws Exception {
+        when(movieService.updateMovieWithGenresAndCountries(1L, movieDto1)).thenReturn(movieWithCountriesAndGenresDto);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .put("/api/v1/movies/{movieId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString((movieDto1))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nameNative").value("Matrix"))
+                .andExpect(jsonPath("$.price").value(0.27));
+        verify(movieService).updateMovieWithGenresAndCountries(1L, movieDto1);
     }
 }
