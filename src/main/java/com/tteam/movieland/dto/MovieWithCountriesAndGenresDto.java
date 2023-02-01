@@ -1,5 +1,6 @@
 package com.tteam.movieland.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -12,8 +13,10 @@ import java.util.Set;
 @EqualsAndHashCode
 @AllArgsConstructor
 @Builder
-public class MovieDto {
+public class MovieWithCountriesAndGenresDto {
+    @JsonIgnore
     private Long id;
+    @JsonProperty("nameRussian")
     private String nameUkr;
     private String nameNative;
     private Integer yearOfRelease;
@@ -22,8 +25,6 @@ public class MovieDto {
     private Double rating;
     @JsonProperty("picturePath")
     private String poster;
-    @JsonProperty("countries")
-    private Set<Long> countriesId;
-    @JsonProperty("genres")
-    private Set<Long> genresId;
+    private Set<CountryDto> countriesDto;
+    private Set<GenreDto> genresDto;
 }

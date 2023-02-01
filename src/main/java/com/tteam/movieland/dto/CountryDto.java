@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CountryDto {
-
     private Long id;
 
     @JsonProperty("name")

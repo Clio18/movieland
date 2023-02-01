@@ -1,7 +1,7 @@
 package com.tteam.movieland.controller;
 
 import com.tteam.movieland.dto.GenreDto;
-import com.tteam.movieland.dto.mapper.EntityMapper;
+import com.tteam.movieland.dto.mapper.GenreMapper;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.service.GenreService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.List;
 public class GenreController {
 
     private final GenreService genreService;
-    private final EntityMapper mapper;
+    private final GenreMapper mapper;
 
     @GetMapping("genres")
     protected List<GenreDto> getAllGenres() {

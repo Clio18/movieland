@@ -1,7 +1,8 @@
 package com.tteam.movieland.controller;
 
 import com.tteam.movieland.dto.MovieDto;
-import com.tteam.movieland.dto.mapper.EntityMapper;
+import com.tteam.movieland.dto.MovieWithCountriesAndGenresDto;
+import com.tteam.movieland.dto.mapper.MovieMapper;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovieController {
 
-    private final EntityMapper mapper;
+    private final MovieMapper mapper;
     private final MovieService movieService;
 
     @GetMapping
@@ -43,6 +44,18 @@ public class MovieController {
         Movie movie = movieService.getById(movieId, currency);
         MovieDto movieDto = mapper.toMovieDto(movie);
         return ResponseEntity.ok(movieDto);
+    }
+
+    @PostMapping("/add")
+    protected ResponseEntity<MovieWithCountriesAndGenresDto> save(@RequestBody MovieDto movieDto) {
+        MovieWithCountriesAndGenresDto withCountriesAndGenresDto = movieService.saveMovieWithGenresAndCountries(movieDto);
+        return ResponseEntity.ok(withCountriesAndGenresDto);
+    }
+
+    @PutMapping("/{movieId}")
+    protected ResponseEntity<MovieWithCountriesAndGenresDto> update(@PathVariable Long movieId, @RequestBody MovieDto movieDto) {
+        MovieWithCountriesAndGenresDto withCountriesAndGenresDto = movieService.updateMovieWithGenresAndCountries(movieId, movieDto);
+        return ResponseEntity.ok(withCountriesAndGenresDto);
     }
 
 

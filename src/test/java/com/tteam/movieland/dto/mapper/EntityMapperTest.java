@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EntityMapperTest {
 
     @Autowired
-    private EntityMapper mapper;
+    private MovieMapper mapper;
 
     @MockBean
     private MovieService movieService;

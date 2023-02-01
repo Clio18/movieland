@@ -2,6 +2,7 @@ package com.tteam.movieland.service;
 
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.repository.CountryRepository;
+import com.tteam.movieland.service.impl.CountryServiceDefault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

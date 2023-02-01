@@ -1,4 +1,4 @@
-package com.tteam.movieland.service;
+package com.tteam.movieland.service.impl;
 
 import com.tteam.movieland.dto.ReviewDto;
 import com.tteam.movieland.dto.mapper.ReviewMapper;
@@ -7,6 +7,7 @@ import com.tteam.movieland.entity.User;
 import com.tteam.movieland.exception.ReviewNotFoundException;
 import com.tteam.movieland.repository.ReviewRepository;
 import com.tteam.movieland.request.ReviewRequest;
+import com.tteam.movieland.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewServiceDefault implements ReviewService{
+public class ReviewServiceDefault implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
