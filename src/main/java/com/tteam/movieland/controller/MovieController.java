@@ -1,16 +1,14 @@
 package com.tteam.movieland.controller;
 
 import com.tteam.movieland.dto.MovieDto;
-import com.tteam.movieland.dto.mapper.EntityMapper;
+import com.tteam.movieland.dto.mapper.MovieMapper;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -18,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovieController {
 
-    private final EntityMapper mapper;
+    private final MovieMapper mapper;
     private final MovieService movieService;
 
     @GetMapping

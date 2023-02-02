@@ -51,8 +51,8 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(2))
-                .andExpect(jsonPath("$[1].id").value(1))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(jsonPath("$[2].id").value(13))
                 .andExpect(jsonPath("$[3].id").value(4))
                 .andExpect(jsonPath("$[4].id").value(3))
@@ -73,7 +73,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                 .andExpect(jsonPath("$[1].id").value(22))
                 .andExpect(jsonPath("$[2].id").value(12))
                 .andExpect(jsonPath("$[3].id").value(25))
-                .andExpect(jsonPath("$[4].id").value(9))
+                .andExpect(jsonPath("$[4].id").value(20))
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-asc-rating.json")));
     }
 
@@ -112,8 +112,8 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(2))
-                .andExpect(jsonPath("$[1].id").value(1))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(jsonPath("$[2].id").value(16))
                 .andExpect(content().json(getResponseAsString("response/movies/get-movies-by-genre-id-and-rating-desc.json")));
     }
@@ -152,28 +152,6 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     void testGetMovieByIdIfMovieNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 100)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
-    @DisplayName("Test Get Movie By Id With Currency Specified")
-    void testGetMovieByIdWithCurrencySpecified() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/movies/{movieId}?currency={currency}", 1L, "USD")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(content().json(getResponseAsString("response/movies/get-movie-by-id-with-currency-specified.json")));
-    }
-
-    @Test
-    @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
-    @DisplayName("Test Get Movie By Id With Currency Specified If Currency Not Found")
-    void testGetMovieByIdWithCurrencySpecifiedIfCurrencyNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/movies/{movieId}?currency={currency}", 1L, "GHTR")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

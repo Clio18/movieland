@@ -1,7 +1,7 @@
 package com.tteam.movieland.controller;
 
 import com.tteam.movieland.dto.MovieDto;
-import com.tteam.movieland.dto.mapper.EntityMapper;
+import com.tteam.movieland.dto.mapper.MovieMapper;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
@@ -41,7 +41,7 @@ class MovieControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private EntityMapper mapper;
+    private MovieMapper mapper;
 
     @MockBean
     private MovieService movieService;
@@ -131,7 +131,7 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("Matrix2"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(1999))
                 .andExpect(jsonPath("$[0].rating").value(9.0))
-                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].picturePath").value("url/"))
                 .andExpect(jsonPath("$[0].description").value("Good movie"))
 
                 .andExpect(jsonPath("$[1].price").value(10.0))
@@ -139,7 +139,7 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$[1].nameNative").value("Matrix"))
                 .andExpect(jsonPath("$[1].yearOfRelease").value(1989))
                 .andExpect(jsonPath("$[1].rating").value(10.0))
-                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].picturePath").value("url/"))
                 .andExpect(jsonPath("$[1].description").value("Best movie"))
                 .andExpect(status().isOk());
         verify(movieService).getAllSortedByRating(sortingOrder);
@@ -163,7 +163,7 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("Matrix2"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(1999))
                 .andExpect(jsonPath("$[0].rating").value(9.0))
-                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].picturePath").value("url/"))
                 .andExpect(jsonPath("$[0].description").value("Good movie"))
 
                 .andExpect(jsonPath("$[1].price").value(10.0))
@@ -171,7 +171,7 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$[1].nameNative").value("Matrix"))
                 .andExpect(jsonPath("$[1].yearOfRelease").value(1989))
                 .andExpect(jsonPath("$[1].rating").value(10.0))
-                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].picturePath").value("url/"))
                 .andExpect(jsonPath("$[1].description").value("Best movie"))
                 .andExpect(status().isOk());
         verify(movieService).getAllSortedByRating(sortingOrder);
@@ -194,7 +194,7 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$[0].nameNative").value("Matrix2"))
                 .andExpect(jsonPath("$[0].yearOfRelease").value(1999))
                 .andExpect(jsonPath("$[0].rating").value(9.0))
-                .andExpect(jsonPath("$[0].poster").value("url/"))
+                .andExpect(jsonPath("$[0].picturePath").value("url/"))
                 .andExpect(jsonPath("$[0].description").value("Good movie"))
 
                 .andExpect(jsonPath("$[1].price").value(10.0))
@@ -202,7 +202,7 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$[1].nameNative").value("Matrix"))
                 .andExpect(jsonPath("$[1].yearOfRelease").value(1989))
                 .andExpect(jsonPath("$[1].rating").value(10.0))
-                .andExpect(jsonPath("$[1].poster").value("url/"))
+                .andExpect(jsonPath("$[1].picturePath").value("url/"))
                 .andExpect(jsonPath("$[1].description").value("Best movie"))
                 .andExpect(status().isOk());
         verify(movieService).getAllSortedByRating(sortingOrder);
