@@ -1,5 +1,6 @@
 package com.tteam.movieland.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
@@ -7,7 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GenreDto {
+public class CountryDto {
     private Long id;
-    private String genreName;
+
+    @JsonProperty("name")
+    private String countryName;
 }
