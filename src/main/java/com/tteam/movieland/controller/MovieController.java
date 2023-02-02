@@ -8,6 +8,7 @@ import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,12 +48,14 @@ public class MovieController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     protected ResponseEntity<MovieWithCountriesAndGenresDto> save(@RequestBody MovieDto movieDto) {
         MovieWithCountriesAndGenresDto withCountriesAndGenresDto = movieService.saveMovieWithGenresAndCountries(movieDto);
         return ResponseEntity.ok(withCountriesAndGenresDto);
     }
 
     @PutMapping("/{movieId}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     protected ResponseEntity<MovieWithCountriesAndGenresDto> update(@PathVariable Long movieId, @RequestBody MovieDto movieDto) {
         MovieWithCountriesAndGenresDto withCountriesAndGenresDto = movieService.updateMovieWithGenresAndCountries(movieId, movieDto);
         return ResponseEntity.ok(withCountriesAndGenresDto);
