@@ -13,13 +13,19 @@ import com.tteam.movieland.repository.MovieRepository;
 import com.tteam.movieland.service.MovieService;
 import com.tteam.movieland.util.CurrencyProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.el.stream.Stream;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -50,22 +56,22 @@ public class MovieServiceDefault implements MovieService {
 
     @Override
     public List<Movie> getAllSortedByRating(String sortingOrder) {
-        if(sortingOrder.toLowerCase().equalsIgnoreCase(Sort.Direction.DESC.name())) {
+        if (sortingOrder.toLowerCase().equalsIgnoreCase(Sort.Direction.DESC.name())) {
             return movieRepository.findAll(PageRequest.of(0, 5, Sort.Direction.DESC, "rating")).stream().toList();
-        }else if (sortingOrder.equalsIgnoreCase(Sort.Direction.ASC.name())){
+        } else if (sortingOrder.equalsIgnoreCase(Sort.Direction.ASC.name())) {
             return movieRepository.findAll(PageRequest.of(0, 5, Sort.Direction.ASC, "rating")).stream().toList();
-        }else {
+        } else {
             return movieRepository.findAll(PageRequest.of(0, 5)).stream().toList();
         }
     }
 
     @Override
     public List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sortingOrder) {
-        if(sortingOrder.toLowerCase().equalsIgnoreCase(Sort.Direction.DESC.name())) {
+        if (sortingOrder.toLowerCase().equalsIgnoreCase(Sort.Direction.DESC.name())) {
             return movieRepository.findByGenresId(PageRequest.of(0, 3, Sort.Direction.DESC, "rating"), genreId).stream().toList();
-        }else if (sortingOrder.equalsIgnoreCase(Sort.Direction.ASC.name())){
+        } else if (sortingOrder.equalsIgnoreCase(Sort.Direction.ASC.name())) {
             return movieRepository.findByGenresId(PageRequest.of(0, 3, Sort.Direction.ASC, "rating"), genreId).stream().toList();
-        }else {
+        } else {
             return movieRepository.findByGenresId(PageRequest.of(0, 3), genreId).stream().toList();
         }
     }
@@ -74,7 +80,7 @@ public class MovieServiceDefault implements MovieService {
     public MovieWithCountriesAndGenresDto saveMovieWithGenresAndCountries(MovieDto movieDto) {
         Movie movie = mapper.toMovie(movieDto);
 
-        enrich(movieDto, movie);
+        enrichParallel(movieDto, movie);
         movieRepository.save(movie);
         return mapper.toWithCountriesAndGenresDto(movie);
     }
@@ -85,7 +91,7 @@ public class MovieServiceDefault implements MovieService {
                 () -> new MovieNotFoundException("Movie was not found by provided id: " + movieId));
         Movie updatedMovie = mapper.update(movie, movieDto);
 
-        enrich(movieDto, updatedMovie);
+        enrichParallel(movieDto, updatedMovie);
         movieRepository.save(updatedMovie);
         return mapper.toWithCountriesAndGenresDto(updatedMovie);
     }
@@ -98,5 +104,28 @@ public class MovieServiceDefault implements MovieService {
 
         updatedMovie.setCountries(countries);
         updatedMovie.setGenres(genres);
+    }
+
+
+    private void enrichParallel(MovieDto movieDto, Movie updatedMovie) {
+        Callable<Object> taskCountry = () -> {
+            Set<Long> countriesIds = movieDto.getCountriesId();
+            HashSet<Country> countries = new HashSet<>(countryRepository.findAllById(countriesIds));
+            updatedMovie.setCountries(countries);
+            return updatedMovie;
+        };
+
+        Callable<Object> taskGenre = () -> {
+            Set<Long> genresIds = movieDto.getGenresId();
+            HashSet<Genre> genres = new HashSet<>(genreRepository.findAllById(genresIds));
+            updatedMovie.setGenres(genres);
+            return updatedMovie;
+        };
+
+        try (var cachedPool = Executors.newCachedThreadPool()) {
+            cachedPool.invokeAll(Set.of(taskCountry, taskGenre), 5, TimeUnit.SECONDS);
+        } catch (InterruptedException e){
+            throw new RuntimeException("Exception from ThreadPool", e);
+        }
     }
 }
