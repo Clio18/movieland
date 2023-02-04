@@ -27,7 +27,7 @@ public class CachedGenreRepository implements GenreRepository {
     }
 
     @PostConstruct
-    @Scheduled(cron = "${cron.interval.genres.cache}")
+    @Scheduled(cron = "${cron.interval.cache.genres}")
     protected void updateGenresCache() {
         log.info("Updating genres cache...");
         cachedGenreList = jpaGenreRepository.findAll();

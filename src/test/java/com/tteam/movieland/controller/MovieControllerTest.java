@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -424,7 +425,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser(roles = {"ADMIN"})
     @DisplayName("Test Save And Check Status Code")
     void testSave_AndCheckStatus() throws Exception {
         when(movieService.saveMovieWithGenresAndCountries(movieDto1)).thenReturn(movieWithCountriesAndGenresDto);
@@ -439,7 +440,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser(roles = {"ADMIN"})
     @DisplayName("Test Update And Check Status Code")
     void testUpdate_AndCheckStatus() throws Exception {
         when(movieService.updateMovieWithGenresAndCountries(1L, movieDto1)).thenReturn(movieWithCountriesAndGenresDto);

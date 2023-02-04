@@ -16,5 +16,6 @@ public class ApplicationConfig {
     private String jwtSecretKey;
     private String jwTokenPrefix;
     private Integer jwTokenExpirationAfterHours;
+    private String pathToCurrenciesRatesInJson;
 
 }

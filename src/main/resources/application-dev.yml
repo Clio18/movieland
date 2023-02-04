@@ -16,8 +16,10 @@ application:
   jwtSecretKey: 2A462D4A614E635266556A586E3272357538782F413F4428472B4B6250655367
   jwTokenPrefix: Bearer
   jwTokenExpirationAfterHours: 24
+  pathToCurrenciesRatesInJson: "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
 
 cron:
   interval:
-    genres:
-      cache: 0 0 */4 * * *
+    cache:
+      genres: 0 0 */4 * * *
+      currency: 0 0 10 * * *

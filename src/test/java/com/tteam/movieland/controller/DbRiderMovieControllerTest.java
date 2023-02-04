@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -183,6 +184,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     @DataSet(value = "datasets/movie/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @ExpectedDataSet(value = "datasets/movie/movies_after_add.yml", ignoreCols = "id")
     @DisplayName("Test add movie")
@@ -207,6 +209,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     @DataSet(value = "datasets/movie/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @ExpectedDataSet(value = "datasets/movie/movies_after_update.yml", ignoreCols = "id")
     @DisplayName("Test update movie")
