@@ -1,6 +1,5 @@
 package com.tteam.movieland;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -45,3 +44,4 @@ public class AbstractBaseITest {
 
 
 }
+
