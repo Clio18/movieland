@@ -1,13 +1,10 @@
 package com.tteam.movieland.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -25,10 +22,6 @@ public class Genre {
 
     @Column(name = "name", length = 100)
     private String genreName;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "genres")
-    private Set<Movie> movies = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {

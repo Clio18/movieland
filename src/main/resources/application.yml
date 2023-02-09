@@ -1,3 +1,11 @@
 spring:
-  profiles:
-    include: dev
+  datasource:
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+cache:
+  evict:
+    interval:
+      genres: 14400000
