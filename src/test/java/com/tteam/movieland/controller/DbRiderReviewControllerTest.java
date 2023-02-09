@@ -4,22 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.tteam.movieland.AbstractBaseITest;
-import com.tteam.movieland.entity.User;
 import com.tteam.movieland.request.ReviewRequest;
-import com.tteam.movieland.security.model.Role;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.Set;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
