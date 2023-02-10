@@ -212,7 +212,7 @@ class MovieControllerTest {
     @DisplayName("Test GetRandomMovie And Check Status Code, Result Size, Fields, Service Method Calling")
     void testGetRandomMovie_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie1, movie2);
-        when(movieService.getThreeRandom()).thenReturn(movies);
+        when(movieService.getRandom()).thenReturn(movies);
         when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
         when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
         mockMvc.perform( MockMvcRequestBuilders
@@ -222,7 +222,7 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].rating").value(10.0))
                 .andExpect(jsonPath("$[1].rating").value(9.0));
-        verify(movieService).getThreeRandom();
+        verify(movieService).getRandom();
     }
 
     @Test

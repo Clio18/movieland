@@ -3,22 +3,41 @@ package com.tteam.movieland.service;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.MovieRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
+@Getter
 @RequiredArgsConstructor
-public class MovieServiceDefault implements MovieService {
+public class DefaultMovieService implements MovieService {
     private final MovieRepository movieRepository;
 
+    @Value("${movie.random.value}")
+    private int number;
+
+    private final Random random = new Random();
+
     @Override
-    public List<Movie> getThreeRandom() {
-        return movieRepository.findThreeRandomMovies();
+    public List<Movie> getRandom() {
+
+        /*The problem with select que from Question que order by RAND()
+        is that your DB will order all records before return one item.
+        So it's expensive in large data sets*/
+
+        //to start from 0
+        long count = movieRepository.count() - 1;
+        long range = count / number;
+        long index = random.nextLong((range));
+        return movieRepository.findAll(PageRequest.of((int) index, number)).stream().toList();
     }
+
 
     @Override
     public Movie getById(Long movieId) {
