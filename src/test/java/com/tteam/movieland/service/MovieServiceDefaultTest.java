@@ -42,6 +42,8 @@ class MovieServiceDefaultTest {
     @Mock
     private JpaGenreRepository genreRepository;
     @Mock
+    private CurrencyService currencyService;
+    @Mock
     private MovieMapper mapper;
     @Mock
     private Page<Movie> page;
@@ -61,7 +63,7 @@ class MovieServiceDefaultTest {
 
     @BeforeEach
     void init() {
-        movieService = new MovieServiceDefault(movieRepository, countryRepository, genreRepository, mapper);
+        movieService = new MovieServiceDefault(movieRepository, countryRepository, genreRepository, currencyService, mapper);
 
         Country usa = Country.builder()
                 .countryName("usa")

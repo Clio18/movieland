@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-class EntityMapperTest {
+class MovieMapperTest {
 
     @Autowired
     private MovieMapper mapper;

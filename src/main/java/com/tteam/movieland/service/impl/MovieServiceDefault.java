@@ -10,16 +10,14 @@ import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.CountryRepository;
 import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
+import com.tteam.movieland.service.CurrencyService;
 import com.tteam.movieland.service.MovieService;
-import com.tteam.movieland.util.CurrencyProvider;
+import com.tteam.movieland.service.model.Currency;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.apache.el.stream.Stream;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +31,7 @@ public class MovieServiceDefault implements MovieService {
     private final MovieRepository movieRepository;
     private final CountryRepository countryRepository;
     private final JpaGenreRepository genreRepository;
+    private final CurrencyService currencyService;
     private final MovieMapper mapper;
 
     @Override
@@ -41,11 +40,14 @@ public class MovieServiceDefault implements MovieService {
     }
 
     @Override
-    public Movie getById(Long movieId, String currency) {
+    public Movie getById(Long movieId, String currencyName) {
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
-        double price = CurrencyProvider.setPriceInCurrency(movie.getPrice(), currency);
-        movie.setPrice(price);
+        Currency currency = Currency.checkCurrency(currencyName.toUpperCase());
+        if (currency != Currency.UAH) {
+            double price = currencyService.convert(movie.getPrice(), currency);
+            movie.setPrice(price);
+        }
         return movie;
     }
 

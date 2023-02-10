@@ -11,6 +11,9 @@ cache:
   evict:
     interval:
       genres: 14400000
+    cron:
+      currency: 59 30 15 * * *
+
 
 application:
   pathToCurrenciesRatesInJson: "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
