@@ -89,7 +89,6 @@ public class Movie {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id, nameUkr, nameNative, yearOfRelease, description, price, rating, countries, poster, genres);
     }
-
 }

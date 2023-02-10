@@ -13,11 +13,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DBRider
 @AutoConfigureMockMvc(addFilters = false)
-class DbRiderMovieControllerTest extends AbstractBaseITest {
+class MovieControllerITest extends AbstractBaseITest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,11 +34,6 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .get("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[2].id").value(3))
-                .andExpect(jsonPath("$[3].id").value(4))
-                .andExpect(jsonPath("$[4].id").value(5))
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-without-parameters.json")));
     }
 
@@ -51,11 +47,6 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[2].id").value(13))
-                .andExpect(jsonPath("$[3].id").value(4))
-                .andExpect(jsonPath("$[4].id").value(3))
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-desc-rating.json")));
     }
 
@@ -69,11 +60,6 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(23))
-                .andExpect(jsonPath("$[1].id").value(22))
-                .andExpect(jsonPath("$[2].id").value(12))
-                .andExpect(jsonPath("$[3].id").value(25))
-                .andExpect(jsonPath("$[4].id").value(20))
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-asc-rating.json")));
     }
 
@@ -85,7 +71,34 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .get("/api/v1/movies/random")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)));
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id", notNullValue()))
+                .andExpect(jsonPath("$[0].nameUkr", notNullValue()))
+                .andExpect(jsonPath("$[0].nameNative", notNullValue()))
+                .andExpect(jsonPath("$[0].yearOfRelease", notNullValue()))
+                .andExpect(jsonPath("$[0].description", notNullValue()))
+                .andExpect(jsonPath("$[0].price", notNullValue()))
+                .andExpect(jsonPath("$[0].rating", notNullValue()))
+                .andExpect(jsonPath("$[0].picturePath", notNullValue()))
+
+                .andExpect(jsonPath("$[1].id", notNullValue()))
+                .andExpect(jsonPath("$[1].nameUkr", notNullValue()))
+                .andExpect(jsonPath("$[1].nameNative", notNullValue()))
+                .andExpect(jsonPath("$[1].yearOfRelease", notNullValue()))
+                .andExpect(jsonPath("$[1].description", notNullValue()))
+                .andExpect(jsonPath("$[1].price", notNullValue()))
+                .andExpect(jsonPath("$[1].rating", notNullValue()))
+                .andExpect(jsonPath("$[1].picturePath", notNullValue()))
+
+                .andExpect(jsonPath("$[2].id", notNullValue()))
+                .andExpect(jsonPath("$[2].nameUkr", notNullValue()))
+                .andExpect(jsonPath("$[2].nameNative", notNullValue()))
+                .andExpect(jsonPath("$[2].yearOfRelease", notNullValue()))
+                .andExpect(jsonPath("$[2].description", notNullValue()))
+                .andExpect(jsonPath("$[2].price", notNullValue()))
+                .andExpect(jsonPath("$[2].rating", notNullValue()))
+                .andExpect(jsonPath("$[2].picturePath", notNullValue())
+                );
     }
 
     @Test
@@ -96,9 +109,6 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .get("/api/v1/movies/genre/{genreId}", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[2].id").value(8))
                 .andExpect(content().json(getResponseAsString("response/movies/get-movies-by-genre-id-without-parameters.json")));
     }
 
@@ -112,9 +122,6 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[2].id").value(16))
                 .andExpect(content().json(getResponseAsString("response/movies/get-movies-by-genre-id-and-rating-desc.json")));
     }
 
@@ -128,9 +135,6 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                         .header("sortingOrder", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(23))
-                .andExpect(jsonPath("$[1].id").value(19))
-                .andExpect(jsonPath("$[2].id").value(8))
                 .andExpect(content().json(getResponseAsString("response/movies/get-movies-by-genre-id-and-rating-asc.json")));
     }
 

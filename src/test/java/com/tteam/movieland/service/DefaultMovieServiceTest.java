@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class MovieServiceDefaultTest {
+class DefaultMovieServiceTest {
 
     @Mock
     private MovieRepository movieRepository;
@@ -39,7 +39,7 @@ class MovieServiceDefaultTest {
 
     @BeforeEach
     void init() {
-        movieService = new MovieServiceDefault(movieRepository);
+        movieService = new DefaultMovieService(movieRepository);
 
         Country usa = Country.builder()
                 .countryName("usa")
