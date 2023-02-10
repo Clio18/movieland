@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = SpringSecurityTestConfig.class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+
 @ExtendWith(SpringExtension.class)
 class CountryControllerTest {
     @Autowired
@@ -41,7 +41,7 @@ class CountryControllerTest {
     private CountryService countryService;
 
     @MockBean
-    private CountryMapper entityMapper;
+    private CountryMapper mapper;
 
     private List<Country> countryList;
     private Country country1;
@@ -71,8 +71,8 @@ class CountryControllerTest {
     @DisplayName("Test GetAll And Check Status Code, Result Size, Fields, Service Method Calling")
     void testGetAllAndCheckStatusSizeFieldsServiceMethodCalling() throws Exception {
         when(countryService.getAll()).thenReturn(countryList);
-        when(entityMapper.toCountryDto(country1)).thenReturn(countryDto1);
-        when(entityMapper.toCountryDto(country2)).thenReturn(countryDto2);
+        when(mapper.toCountryDto(country1)).thenReturn(countryDto1);
+        when(mapper.toCountryDto(country2)).thenReturn(countryDto2);
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/country")
                         .accept(MediaType.APPLICATION_JSON))
@@ -81,7 +81,7 @@ class CountryControllerTest {
                 .andExpect(jsonPath("$[0].name").value("ukraine"))
                 .andExpect(jsonPath("$[1].name").value("usa"));
         verify(countryService).getAll();
-        verify(entityMapper, times(2)).toCountryDto(isA(Country.class));
+        verify(mapper, times(2)).toCountryDto(isA(Country.class));
     }
 
 }

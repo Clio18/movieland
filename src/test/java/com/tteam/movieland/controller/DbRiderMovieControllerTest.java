@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;;
 import com.tteam.movieland.AbstractBaseITest;;
+import com.tteam.movieland.config.TestConfig;
+import com.vladmihalcea.sql.SQLStatementCountValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -17,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DBRider
 @AutoConfigureMockMvc(addFilters = false)
+@Import({TestConfig.class})
 class DbRiderMovieControllerTest extends AbstractBaseITest {
 
     @Autowired
@@ -29,6 +33,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test GetAll Without Parameters")
     void testGetAllWithoutParameters() throws Exception {
+        SQLStatementCountValidator.reset();
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -39,6 +44,7 @@ class DbRiderMovieControllerTest extends AbstractBaseITest {
                 .andExpect(jsonPath("$[3].id").value(4))
                 .andExpect(jsonPath("$[4].id").value(5))
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-without-parameters.json")));
+        SQLStatementCountValidator.assertSelectCount(2);
     }
 
     @Test

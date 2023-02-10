@@ -47,7 +47,7 @@ public class NbuCurrencyService implements CurrencyService {
                  .orElse(1.0);
      }
 
-    @PostConstruct
+//    @PostConstruct
     @Scheduled(cron = "${cache.evict.cron.currency}")
     public void updateCurrencyCache() {
         ResponseEntity<List<RawCurrency>> responseEntity = new RestTemplate().exchange(
