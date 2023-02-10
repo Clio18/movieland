@@ -27,7 +27,7 @@ public class MovieController {
 
     @GetMapping("random")
     protected List<MovieDto> getRandomMovie() {
-        List<Movie> randomMovies = movieService.getThreeRandom();
+        List<Movie> randomMovies = movieService.getRandom();
         return randomMovies.stream().map(mapper::toMovieDto).toList();
     }
 

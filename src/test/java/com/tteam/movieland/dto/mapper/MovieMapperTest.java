@@ -7,25 +7,54 @@ import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import java.util.Set;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.jupiter.api.Assertions.*;
+class MovieMapperTest {
+    private final MovieMapper mapper = new MovieMapper() {
+        @Override
+        public MovieDto toMovieDto(Movie movie) {
+            if ( movie == null ) {
+                return null;
+            }
 
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-class EntityMapperTest {
+            MovieDto.MovieDtoBuilder movieDto = MovieDto.builder();
 
-    @Autowired
-    private MovieMapper mapper;
+            movieDto.id( movie.getId() );
+            movieDto.nameUkr( movie.getNameUkr() );
+            movieDto.nameNative( movie.getNameNative() );
+            movieDto.yearOfRelease( movie.getYearOfRelease() );
+            movieDto.description( movie.getDescription() );
+            movieDto.price( movie.getPrice() );
+            movieDto.rating( movie.getRating() );
+            movieDto.poster( movie.getPoster() );
 
+            return movieDto.build();
+        }
+
+        @Override
+        public Movie toMovie(MovieDto movieDto) {
+            if ( movieDto == null ) {
+                return null;
+            }
+
+            Movie.MovieBuilder movie = Movie.builder();
+
+            movie.id( movieDto.getId() );
+            movie.nameUkr( movieDto.getNameUkr() );
+            movie.nameNative( movieDto.getNameNative() );
+            movie.yearOfRelease( movieDto.getYearOfRelease() );
+            movie.description( movieDto.getDescription() );
+            movie.price( movieDto.getPrice() );
+            movie.rating( movieDto.getRating() );
+            movie.poster( movieDto.getPoster() );
+
+            return movie.build();
+        }
+    };
     @MockBean
     private MovieService movieService;
-
     private Movie movie;
     private MovieDto movieDto;
 

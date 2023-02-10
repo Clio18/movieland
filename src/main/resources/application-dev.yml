@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:8200/cinema
+    username: postgres
+    password: postgres
