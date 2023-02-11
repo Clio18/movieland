@@ -31,9 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-//this annotation invoke only the part ot the spring context, precisely the targeted controller
 @WebMvcTest(MovieController.class)
-//this annotation needs to avoid manual mockMvc configuration
 @AutoConfigureMockMvc
 class MovieControllerTest {
 

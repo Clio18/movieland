@@ -1,7 +1,7 @@
 CREATE TABLE movies(
    id SERIAL PRIMARY KEY,
    name_ukr VARCHAR(100),
-   name_eng VARCHAR(100),
+   name_native VARCHAR(100),
    year INTEGER,
    description TEXT,
    rating NUMERIC,

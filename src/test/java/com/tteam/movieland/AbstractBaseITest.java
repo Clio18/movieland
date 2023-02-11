@@ -1,5 +1,7 @@
 package com.tteam.movieland;
 
+import com.vladmihalcea.sql.SQLStatementCountValidator;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -42,5 +44,9 @@ public class AbstractBaseITest {
 		}
 	}
 
+	@BeforeEach
+	void init(){
+		SQLStatementCountValidator.reset();
+	}
 
 }
