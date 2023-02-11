@@ -60,8 +60,6 @@ class MovieMapperTest {
                 .yearOfRelease(1989)
                 .rating(10.0)
                 .poster("url/")
-                .countriesId(Set.of(1L,2L))
-                .genresId(Set.of(1L,2L))
                 .description("Best movie")
                 .build();
     }

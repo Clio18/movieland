@@ -30,7 +30,7 @@ public class Movie {
     @Column(name = "name_ukr")
     private String nameUkr;
 
-    @Column(name = "name_eng")
+    @Column(name = "name_native")
     private String nameNative;
 
     @Column(name = "year")
