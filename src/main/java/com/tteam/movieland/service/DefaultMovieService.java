@@ -52,22 +52,22 @@ public class DefaultMovieService implements MovieService {
 
     @Override
     public List<Movie> getAllSortedByRating(String sortingOrder) {
-        if(sortingOrder.toLowerCase().equalsIgnoreCase(Sort.Direction.DESC.name())) {
+        if (sortingOrder.toLowerCase().equalsIgnoreCase(Sort.Direction.DESC.name())) {
             return movieRepository.findAll(PageRequest.of(0, 5, Sort.Direction.DESC, "rating")).stream().toList();
-        }else if (sortingOrder.equalsIgnoreCase(Sort.Direction.ASC.name())){
+        } else if (sortingOrder.equalsIgnoreCase(Sort.Direction.ASC.name())) {
             return movieRepository.findAll(PageRequest.of(0, 5, Sort.Direction.ASC, "rating")).stream().toList();
-        }else {
+        } else {
             return movieRepository.findAll(PageRequest.of(0, 5)).stream().toList();
         }
     }
 
     @Override
     public List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sortingOrder) {
-        if(sortingOrder.toLowerCase().equalsIgnoreCase(Sort.Direction.DESC.name())) {
+        if (sortingOrder.toLowerCase().equalsIgnoreCase(Sort.Direction.DESC.name())) {
             return movieRepository.findByGenresId(PageRequest.of(0, 3, Sort.Direction.DESC, "rating"), genreId).stream().toList();
-        }else if (sortingOrder.equalsIgnoreCase(Sort.Direction.ASC.name())){
+        } else if (sortingOrder.equalsIgnoreCase(Sort.Direction.ASC.name())) {
             return movieRepository.findByGenresId(PageRequest.of(0, 3, Sort.Direction.ASC, "rating"), genreId).stream().toList();
-        }else {
+        } else {
             return movieRepository.findByGenresId(PageRequest.of(0, 3), genreId).stream().toList();
         }
     }

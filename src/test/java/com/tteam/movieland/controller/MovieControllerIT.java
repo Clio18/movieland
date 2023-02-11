@@ -5,7 +5,6 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.tteam.movieland.AbstractBaseITest;
 import com.tteam.movieland.config.QueryCountTestConfig;
-import com.vladmihalcea.sql.SQLStatementCountValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DBRider
 @Import({QueryCountTestConfig.class})
 @AutoConfigureMockMvc(addFilters = false)
-class MovieControllerITest extends AbstractBaseITest {
+class MovieControllerIT extends AbstractBaseITest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,7 +39,7 @@ class MovieControllerITest extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-without-parameters.json")));
-        SQLStatementCountValidator.assertSelectCount(2);
+        assertSelectCount(2);
     }
 
     @Test
@@ -53,7 +53,7 @@ class MovieControllerITest extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-desc-rating.json")));
-        SQLStatementCountValidator.assertSelectCount(2);
+        assertSelectCount(2);
     }
 
     @Test
@@ -67,7 +67,7 @@ class MovieControllerITest extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(getResponseAsString("response/movies/get-all-asc-rating.json")));
-        SQLStatementCountValidator.assertSelectCount(2);
+        assertSelectCount(2);
     }
 
     @Test
@@ -106,7 +106,7 @@ class MovieControllerITest extends AbstractBaseITest {
                 .andExpect(jsonPath("$[2].rating", notNullValue()))
                 .andExpect(jsonPath("$[2].picturePath", notNullValue())
                 );
-        SQLStatementCountValidator.assertSelectCount(3);
+        assertSelectCount(3);
     }
 
     @Test
@@ -118,7 +118,7 @@ class MovieControllerITest extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(getResponseAsString("response/movies/get-movies-by-genre-id-without-parameters.json")));
-        SQLStatementCountValidator.assertSelectCount(2);
+        assertSelectCount(2);
     }
 
     @Test
@@ -132,7 +132,7 @@ class MovieControllerITest extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(getResponseAsString("response/movies/get-movies-by-genre-id-and-rating-desc.json")));
-        SQLStatementCountValidator.assertSelectCount(2);
+        assertSelectCount(2);
     }
 
     @Test
@@ -146,7 +146,7 @@ class MovieControllerITest extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(getResponseAsString("response/movies/get-movies-by-genre-id-and-rating-asc.json")));
-        SQLStatementCountValidator.assertSelectCount(2);
+        assertSelectCount(2);
     }
 
     @Test
@@ -159,7 +159,7 @@ class MovieControllerITest extends AbstractBaseITest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(content().json(getResponseAsString("response/movies/get-movie-by-id.json")));
-        SQLStatementCountValidator.assertSelectCount(1);
+        assertSelectCount(1);
     }
 
     @Test
@@ -170,7 +170,7 @@ class MovieControllerITest extends AbstractBaseITest {
                         .get("/api/v1/movies/{movieId}", 100)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-        SQLStatementCountValidator.assertSelectCount(1);
+        assertSelectCount(1);
     }
 
 }

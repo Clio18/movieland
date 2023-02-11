@@ -18,6 +18,10 @@
 		<org.testcontainers.version>1.17.6</org.testcontainers.version>
 		<org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
 		<org.projectlombok.version>1.18.22</org.projectlombok.version>
+		<org.projectlombok-binding.version>0.2.0</org.projectlombok-binding.version>
+		<org.apache.maven.plugins.version>3.0.0-M8</org.apache.maven.plugins.version>
+		<com.vladmihalcea.version>1.0.7</com.vladmihalcea.version>
+		<skipIT>true</skipIT>
 	</properties>
 
 	<dependencies>
@@ -37,7 +41,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
 
 		<!-- SIMPLIFICATION -->
 		<dependency>
@@ -78,7 +81,7 @@
 		<dependency>
 			<groupId>com.vladmihalcea</groupId>
 			<artifactId>db-util</artifactId>
-			<version>1.0.7</version>
+			<version>${com.vladmihalcea.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -88,7 +91,6 @@
 			<artifactId>mapstruct</artifactId>
 			<version>${org.mapstruct.version}</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -123,7 +125,7 @@
 						<dependency>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok-mapstruct-binding</artifactId>
-							<version>0.2.0</version>
+							<version>${org.projectlombok-binding.version}</version>
 						</dependency>
 					</annotationProcessorPaths>
 					<!--Make generated mapper impl as a bean -->
@@ -132,6 +134,14 @@
 							-Amapstruct.defaultComponentModel=spring
 						</compilerArg>
 					</compilerArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${org.apache.maven.plugins.version}</version>
+				<configuration>
+					<skipITs>${skipIT}</skipITs>
 				</configuration>
 			</plugin>
 		</plugins>

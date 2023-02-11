@@ -7,5 +7,6 @@ import org.mapstruct.*;
 @Mapper
 public interface MovieMapper {
     MovieDto toMovieDto(Movie movie);
+
     Movie toMovie(MovieDto movieDto);
 }
