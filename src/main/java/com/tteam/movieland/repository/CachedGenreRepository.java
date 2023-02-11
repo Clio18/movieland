@@ -1,12 +1,13 @@
 package com.tteam.movieland.repository;
 
 import com.tteam.movieland.entity.Genre;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -18,14 +19,17 @@ public class CachedGenreRepository implements GenreRepository {
     private List<Genre> cachedGenreList;
 
     @Override
+    @Transactional
     public List<Genre> findAll() {
         log.info("Get cached genres list.");
-        return cachedGenreList;
+        if (cachedGenreList.isEmpty()) {
+            updateGenresCache();
+        }
+        return new ArrayList<>(cachedGenreList);
     }
 
-    @PostConstruct
-    @Scheduled(cron = "${genres.cache.evict.cron.interval}")
-    public void updateGenresCache() {
+    @Scheduled(fixedRateString  = "${cache.evict.interval.genres}")
+    void updateGenresCache() {
         log.info("Updating genres cache...");
         cachedGenreList = jpaGenreRepository.findAll();
     }

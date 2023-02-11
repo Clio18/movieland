@@ -6,11 +6,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
-genres:
-  cache:
-    evict:
-      cron:
-        interval: 0 0 */4 * * *
+cache:
+  evict:
+    interval:
+      genres: 14400000
 
 movie:
   random:

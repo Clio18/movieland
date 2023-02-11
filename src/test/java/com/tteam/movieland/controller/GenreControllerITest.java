@@ -3,7 +3,6 @@ package com.tteam.movieland.controller;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.tteam.movieland.AbstractBaseITest;
-import com.tteam.movieland.repository.CachedGenreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +19,10 @@ class GenreControllerITest extends AbstractBaseITest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private CachedGenreRepository cachedGenreRepository;
-
     @Test
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test GetAll Genres")
     void testGetAllGenres() throws Exception {
-        cachedGenreRepository.updateGenresCache();
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/genres")
                         .contentType(MediaType.APPLICATION_JSON))
