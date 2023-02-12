@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
     Page<Movie> findByGenresId(Pageable p, Long id);
+
     long count();
+
     Page<Movie> findAll(Pageable p);
 }

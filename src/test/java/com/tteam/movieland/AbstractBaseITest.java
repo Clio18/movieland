@@ -19,6 +19,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
+
 @SpringBootTest
 @Testcontainers
 @DirtiesContext
@@ -46,7 +48,7 @@ public class AbstractBaseITest {
 
 	@BeforeEach
 	void init(){
-		SQLStatementCountValidator.reset();
+		reset();
 	}
 
 }
