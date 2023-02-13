@@ -1,7 +1,6 @@
 package com.tteam.movieland;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,7 +23,6 @@ import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 @SpringBootTest
 @Testcontainers
 @DirtiesContext
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class AbstractBaseITest {
 	@Container

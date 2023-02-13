@@ -1,4 +1,4 @@
-package com.tteam.movieland.service.impl;
+package com.tteam.movieland.service;
 
 import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.dto.MovieWithCountriesAndGenresDto;
@@ -10,34 +10,53 @@ import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.CountryRepository;
 import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
-import com.tteam.movieland.service.CurrencyService;
-import com.tteam.movieland.service.MovieService;
 import com.tteam.movieland.service.model.Currency;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Getter
 @RequiredArgsConstructor
-public class MovieServiceDefault implements MovieService {
+public class DefaultMovieService implements MovieService {
+
     private final MovieRepository movieRepository;
     private final CountryRepository countryRepository;
     private final JpaGenreRepository genreRepository;
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
 
+
+    @Value("${movie.random.value}")
+    private int number;
+
+    private final Random random = new Random();
+
     @Override
-    public List<Movie> getThreeRandom() {
-        return movieRepository.findThreeRandomMovies();
+    public List<Movie> getRandom() {
+
+        /*The problem with select que from Question que order by RAND()
+        is that your DB will order all records before return one item.
+        So it's expensive in large data sets*/
+
+        //to start from 0
+        long count = movieRepository.count() - 1;
+        long range = count / number;
+        long index = random.nextLong((range));
+        return movieRepository.findAll(PageRequest.of((int) index, number)).stream().toList();
     }
+
 
     @Override
     public Movie getById(Long movieId, String currencyName) {
@@ -98,6 +117,7 @@ public class MovieServiceDefault implements MovieService {
         return mapper.toWithCountriesAndGenresDto(updatedMovie);
     }
 
+
     private void enrich(MovieDto movieDto, Movie updatedMovie) {
         Set<Long> countriesIds = movieDto.getCountriesId();
         Set<Country> countries = new HashSet<>(countryRepository.findAllById(countriesIds));
@@ -107,7 +127,6 @@ public class MovieServiceDefault implements MovieService {
         updatedMovie.setCountries(countries);
         updatedMovie.setGenres(genres);
     }
-
 
     private void enrichParallel(MovieDto movieDto, Movie updatedMovie) {
         Callable<Object> taskCountry = () -> {
@@ -130,4 +149,6 @@ public class MovieServiceDefault implements MovieService {
             throw new RuntimeException("Exception from ThreadPool", e);
         }
     }
+
+
 }

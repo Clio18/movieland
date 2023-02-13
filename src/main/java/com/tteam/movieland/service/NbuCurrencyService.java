@@ -1,6 +1,5 @@
-package com.tteam.movieland.service.impl;
+package com.tteam.movieland.service;
 
-import com.tteam.movieland.service.CurrencyService;
 import com.tteam.movieland.service.model.Currency;
 import com.tteam.movieland.service.model.RawCurrency;
 import jakarta.annotation.PostConstruct;
@@ -47,7 +46,7 @@ public class NbuCurrencyService implements CurrencyService {
                  .orElse(1.0);
      }
 
-//    @PostConstruct
+    @PostConstruct
     @Scheduled(cron = "${cache.evict.cron.currency}")
     public void updateCurrencyCache() {
         ResponseEntity<List<RawCurrency>> responseEntity = new RestTemplate().exchange(

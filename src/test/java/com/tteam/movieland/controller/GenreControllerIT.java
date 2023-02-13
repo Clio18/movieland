@@ -7,6 +7,7 @@ import com.tteam.movieland.config.QueryCountTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @DBRider
+@AutoConfigureMockMvc
 @Import({QueryCountTestConfig.class})
 class GenreControllerIT extends AbstractBaseITest {
 

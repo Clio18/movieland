@@ -3,13 +3,14 @@ package com.tteam.movieland.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.spring.api.DBRider;;
-import com.tteam.movieland.AbstractBaseITest;;
+import com.github.database.rider.spring.api.DBRider;
+import com.tteam.movieland.AbstractBaseITest;
 import com.tteam.movieland.config.QueryCountTestConfig;
 import com.tteam.movieland.dto.MovieDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -24,6 +25,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DBRider
+@AutoConfigureMockMvc
 @Import({QueryCountTestConfig.class})
 class MovieControllerIT extends AbstractBaseITest {
 
@@ -113,7 +115,7 @@ class MovieControllerIT extends AbstractBaseITest {
                 .andExpect(jsonPath("$[2].rating", notNullValue()))
                 .andExpect(jsonPath("$[2].picturePath", notNullValue())
                 );
-        assertSelectCount(1);
+        assertSelectCount(3);
     }
 
     @Test

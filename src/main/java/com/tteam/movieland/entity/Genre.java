@@ -33,7 +33,7 @@ public class Genre {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id, genreName);
     }
 
 }

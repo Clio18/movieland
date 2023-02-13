@@ -30,7 +30,7 @@ public class Movie {
     @Column(name = "name_ukr")
     private String nameUkr;
 
-    @Column(name = "name_eng")
+    @Column(name = "name_native")
     private String nameNative;
 
     @Column(name = "year")
@@ -67,6 +67,7 @@ public class Movie {
     private Set<Genre> genres = new LinkedHashSet<>();
 
     @OneToMany(mappedBy="movie")
+    @ToString.Exclude
     private Set<Review> reviews;
 
     @Override
@@ -79,7 +80,6 @@ public class Movie {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id, nameUkr, nameNative, yearOfRelease, description, price, rating, countries, poster, genres);
     }
-
 }
