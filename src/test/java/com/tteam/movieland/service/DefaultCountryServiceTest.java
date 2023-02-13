@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CountryServiceDefaultTest {
+class DefaultCountryServiceTest {
     @Mock
     private CountryRepository countryRepository;
 

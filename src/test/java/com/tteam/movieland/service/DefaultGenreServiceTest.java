@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GenreServiceDefaultTest {
+class DefaultGenreServiceTest {
 
     @Mock
     private GenreRepository genreRepository;

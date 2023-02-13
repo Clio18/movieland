@@ -28,7 +28,7 @@ public class CachedGenreRepository implements GenreRepository {
         return new ArrayList<>(cachedGenreList);
     }
 
-//    @Scheduled(fixedRateString  = "${cache.evict.interval.genres}")
+    @Scheduled(fixedRateString  = "${cache.evict.interval.genres}")
     void updateGenresCache() {
         log.info("Updating genres cache...");
         cachedGenreList = jpaGenreRepository.findAll();

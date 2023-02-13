@@ -1,4 +1,4 @@
-package com.tteam.movieland.security;
+package com.tteam.movieland.config;
 
 import com.tteam.movieland.entity.User;
 import com.tteam.movieland.security.model.Role;

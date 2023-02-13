@@ -1,6 +1,5 @@
 spring:
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:8200/cinema
-    username: postgres
-    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: false

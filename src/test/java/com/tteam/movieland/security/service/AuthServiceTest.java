@@ -86,8 +86,6 @@ class AuthServiceTest {
         assertEquals(String.format("User not found by provided email: %s", email), exception.getMessage());
     }
 
-    ;
-
     @Test
     @DisplayName("Test Login With Invalid Password And Check Exception Throwing")
     void testLoginWithInValidPassword_CheckExceptionThrowing() {
@@ -99,8 +97,6 @@ class AuthServiceTest {
             authService.authenticate(authRequest);
         });
     }
-
-    ;
 
     @Test
     @DisplayName("Test Registration And Check Not Null And Method Calling")
