@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class NbuCurrencyService implements CurrencyService {
-    @Value("${application.pathToCurrenciesRatesInJson}")
+    @Value("${service.pathToCurrenciesRatesInJson}")
     private String PATH;
     private List<RawCurrency> currencyList;
 

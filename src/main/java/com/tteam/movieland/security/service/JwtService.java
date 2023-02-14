@@ -1,12 +1,12 @@
 package com.tteam.movieland.security.service;
 
-import com.tteam.movieland.configuration.ApplicationConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +20,10 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-
-    private final ApplicationConfig applicationConfig;
+    @Value("${security.jwtSecretKey}")
+    private String jwtSecretKey;
+    @Value("${security.jwTokenExpirationAfterHours}")
+    private Integer jwTokenExpirationAfterHours;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -36,7 +38,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(applicationConfig.getJwTokenExpirationAfterHours())))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(jwTokenExpirationAfterHours)))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -69,7 +71,7 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        byte [] keyBytes = Decoders.BASE64.decode(applicationConfig.getJwtSecretKey());
+        byte [] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

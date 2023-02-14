@@ -3,3 +3,8 @@ spring:
     properties:
       hibernate:
         generate_statistics: false
+
+security:
+  jwtSecretKey: 111111111111111111111111111111111111111111111111111111111
+  jwTokenPrefix: Bearer
+  jwTokenExpirationAfterHours: 24

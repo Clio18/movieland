@@ -4,7 +4,7 @@ spring:
     username: postgres
     password: postgres
 
-application:
+security:
   jwtSecretKey: 2A462D4A614E635266556A586E3272357538782F413F4428472B4B6250655367
   jwTokenPrefix: Bearer
   jwTokenExpirationAfterHours: 24

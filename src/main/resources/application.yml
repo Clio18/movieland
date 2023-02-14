@@ -18,5 +18,5 @@ movie:
   random:
     value: 3
 
-application:
+service:
   pathToCurrenciesRatesInJson: "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
