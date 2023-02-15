@@ -1,3 +1,22 @@
 spring:
-  profiles:
-    include: dev
+  datasource:
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+cache:
+  evict:
+    interval:
+      genres: 14400000
+    cron:
+      currency: 59 30 15 * * *
+
+movie:
+  random:
+    value: 3
+
+service:
+  pathToCurrenciesRatesInJson: "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"

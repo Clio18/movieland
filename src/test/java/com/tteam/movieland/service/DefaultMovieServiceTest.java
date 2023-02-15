@@ -12,7 +12,6 @@ import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.CountryRepository;
 import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
-import com.tteam.movieland.service.impl.MovieServiceDefault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class MovieServiceDefaultTest {
+class DefaultMovieServiceTest {
 
     @Mock
     private MovieRepository movieRepository;
@@ -41,6 +40,8 @@ class MovieServiceDefaultTest {
     private CountryRepository countryRepository;
     @Mock
     private JpaGenreRepository genreRepository;
+    @Mock
+    private CurrencyService currencyService;
     @Mock
     private MovieMapper mapper;
     @Mock
@@ -61,7 +62,7 @@ class MovieServiceDefaultTest {
 
     @BeforeEach
     void init() {
-        movieService = new MovieServiceDefault(movieRepository, countryRepository, genreRepository, mapper);
+        movieService = new DefaultMovieService(movieRepository, countryRepository, genreRepository, currencyService, mapper);
 
         Country usa = Country.builder()
                 .countryName("usa")
@@ -202,9 +203,7 @@ class MovieServiceDefaultTest {
     @DisplayName("Test update and check exception thrown")
     void testUpdate_AndCheckExceptionThrown() {
         when(movieRepository.findById(1L)).thenThrow(MovieNotFoundException.class);
-        assertThrows(MovieNotFoundException.class, () -> {
-            movieService.updateMovieWithGenresAndCountries(1L, movieDto);
-        });
+        assertThrows(MovieNotFoundException.class, () -> movieService.updateMovieWithGenresAndCountries(1L, movieDto));
     }
 
 }

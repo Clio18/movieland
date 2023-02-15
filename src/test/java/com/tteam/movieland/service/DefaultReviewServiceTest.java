@@ -6,7 +6,6 @@ import com.tteam.movieland.entity.*;
 import com.tteam.movieland.exception.ReviewNotFoundException;
 import com.tteam.movieland.repository.ReviewRepository;
 import com.tteam.movieland.request.ReviewRequest;
-import com.tteam.movieland.service.impl.ReviewServiceDefault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ReviewServiceDefaultTest {
+class DefaultReviewServiceTest {
 
     @Mock
     private ReviewRepository reviewRepository;
@@ -38,7 +37,7 @@ class ReviewServiceDefaultTest {
 
     @BeforeEach
     void init() {
-        reviewService = new ReviewServiceDefault(reviewRepository, reviewMapper);
+        reviewService = new DefaultReviewService(reviewRepository, reviewMapper);
 
         review1 = Review.builder()
                 .id(1L)
@@ -96,9 +95,7 @@ class ReviewServiceDefaultTest {
     @DisplayName("Test Get Review By Id If Review Not Found")
     void testGetReviewByIdIfReviewNotFound() {
         when(reviewRepository.findById(1L)).thenThrow(ReviewNotFoundException.class);
-        assertThrows(ReviewNotFoundException.class, () -> {
-            reviewService.getById(1L);
-        });
+        assertThrows(ReviewNotFoundException.class, () -> reviewService.getById(1L));
         verify(reviewRepository).findById(1L);
     }
 

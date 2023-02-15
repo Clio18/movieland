@@ -1,4 +1,4 @@
-package com.tteam.movieland.util.model;
+package com.tteam.movieland.service.model;
 
 import com.tteam.movieland.exception.CurrencyNotFoundException;
 import lombok.AllArgsConstructor;
@@ -13,12 +13,12 @@ public enum Currency {
     USD(840),
     EUR(978);
 
-    private final int ISO4217Code;
+    private final int numericCode;
 
-    public static String checkCurrency(String currencyName) {
+    public static Currency checkCurrency(String currencyName) {
         return Arrays.stream(values()).map(Enum::name)
                 .filter(c -> c.equals(currencyName))
-                .findAny()
+                .findAny().map(Currency::valueOf)
                 .orElseThrow(() -> new CurrencyNotFoundException("Currency " + currencyName + " not found."));
     }
 }

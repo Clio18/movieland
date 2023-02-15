@@ -1,17 +1,17 @@
 MOVIES:
   -
     id: 2
-    name_ukr: "Вищий пілотаж"
-    name_eng: "Devotion"
+    name_ukr: "Побег из Шоушенка"
+    name_native: "The Shawshank Redemption"
     year: 1994
     description: "Успешный банкир Энди Дюфрейн обвинен в убийстве собственной жены и ее любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решетки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, вооруженный живым умом и доброй душой, отказывается мириться с приговором судьбы и начинает разрабатывать невероятно дерзкий план своего освобождения."
     rating: 8.9
     price: 123.45
-    picture_path: "https://uakino.club/uploads/mini/poster/b2/c7e758be3159ff0a1d05a1205f91c7.jpg"
+    picture_path: "https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg"
   -
     id: 3
     name_ukr: "Зеленая миля"
-    name_eng: "The Green Mile"
+    name_native: "The Green Mile"
     year: 1999
     description: "Обвиненный в страшном преступлении, Джон Коффи оказывается в блоке смертников тюрьмы «Холодная гора». Вновь прибывший обладал поразительным ростом и был пугающе спокоен, что, впрочем, никак не влияло на отношение к нему начальника блока Пола Эджкомба, привыкшего исполнять приговор."
     rating: 8.9
@@ -80,7 +80,7 @@ USERS:
 MOVIE_COUNTRY:
   -
     movie_id: 2
-    country_id: 1
+    country_id: 2
   -
     movie_id: 3
     country_id: 3
@@ -91,6 +91,9 @@ MOVIE_GENRE:
   -
     movie_id: 2
     genre_id: 1
+  -
+    movie_id: 2
+    genre_id: 2
   -
     movie_id: 3
     genre_id: 2

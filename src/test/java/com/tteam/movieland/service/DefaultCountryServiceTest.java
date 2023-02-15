@@ -2,7 +2,6 @@ package com.tteam.movieland.service;
 
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.repository.CountryRepository;
-import com.tteam.movieland.service.impl.CountryServiceDefault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CountryServiceDefaultTest {
+class DefaultCountryServiceTest {
     @Mock
     private CountryRepository countryRepository;
 
@@ -34,7 +33,7 @@ class CountryServiceDefaultTest {
                 .countryName("usa")
                 .build();
         countryList = Arrays.asList(country1, country2);
-        countryService = new CountryServiceDefault(countryRepository);
+        countryService = new DefaultCountryService(countryRepository);
     }
 
     @Test

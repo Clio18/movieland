@@ -2,7 +2,6 @@ package com.tteam.movieland.service;
 
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.repository.GenreRepository;
-import com.tteam.movieland.service.impl.GenreServiceDefault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GenreServiceDefaultTest {
+class DefaultGenreServiceTest {
 
     @Mock
     private GenreRepository genreRepository;
@@ -28,7 +27,7 @@ class GenreServiceDefaultTest {
 
     @BeforeEach
     void init() {
-        genreService = new GenreServiceDefault(genreRepository);
+        genreService = new DefaultGenreService(genreRepository);
 
         drama = Genre.builder()
                 .genreName("drama")

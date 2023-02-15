@@ -4,28 +4,19 @@ import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
-import com.tteam.movieland.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-class EntityMapperTest {
-
+@SpringBootTest(classes = {MovieMapperImpl.class})
+class MovieMapperTest {
     @Autowired
     private MovieMapper mapper;
-
-    @MockBean
-    private MovieService movieService;
-
     private Movie movie;
     private MovieDto movieDto;
 

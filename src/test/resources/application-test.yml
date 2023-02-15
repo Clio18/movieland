@@ -1,17 +1,10 @@
 spring:
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:8200/cinema
-    username: postgres
-    password: postgres
-
-
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+    properties:
+      hibernate:
+        generate_statistics: false
 
-cron:
-  interval:
-    genres:
-      cache: 0 0 */4 * * *
-
+security:
+  jwtSecretKey: 111111111111111111111111111111111111111111111111111111111
+  jwTokenPrefix: Bearer
+  jwTokenExpirationAfterHours: 24

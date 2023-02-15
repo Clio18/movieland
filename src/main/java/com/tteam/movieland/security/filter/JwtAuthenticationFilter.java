@@ -1,6 +1,5 @@
 package com.tteam.movieland.security.filter;
 
-import com.tteam.movieland.configuration.ApplicationConfig;
 import com.tteam.movieland.security.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,8 +25,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
-    private final ApplicationConfig applicationConfig;
     private final JwtService jwtService;
+    @Value("${security.jwTokenPrefix}")
+    private String jwTokenPrefix;
 
     @Override
     protected void doFilterInternal(
@@ -37,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader(AUTHORIZATION);
         final String jwt;
         final String email;
-        if (authHeader == null || !authHeader.startsWith(applicationConfig.getJwTokenPrefix())){
+        if (authHeader == null || !authHeader.startsWith(jwTokenPrefix)){
             filterChain.doFilter(request, response);
             return;
         }

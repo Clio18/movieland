@@ -1,6 +1,8 @@
 package com.tteam.movieland.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.tteam.movieland.AbstractBaseITest;
 import com.tteam.movieland.dto.CountryDto;
 import com.tteam.movieland.dto.GenreDto;
 import com.tteam.movieland.dto.MovieDto;
@@ -11,19 +13,15 @@ import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.CurrencyNotFoundException;
 import com.tteam.movieland.exception.MovieNotFoundException;
-import com.tteam.movieland.security.SpringSecurityTestConfig;
 import com.tteam.movieland.service.MovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -36,11 +34,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = SpringSecurityTestConfig.class)
-@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
-class MovieControllerTest {
+class MovieControllerTest extends AbstractBaseITest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -163,7 +158,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("""
     Test GetAll Rating Descending Order And Check Status Code, Result Size, Fields,
     Service Method Calling""")
@@ -196,7 +191,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("""
     Test GetAll Rating Ascending Order And Check Status Code, Result Size, Fields,
     Service Method Calling""")
@@ -229,7 +224,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("""
     Test GetAllMovies No Rating Ordering And Check Status Code, Result Size, Fields, Service Method Calling""")
     void testGetAllMoviesNoRatingOrdering_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
@@ -261,11 +256,11 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("Test GetRandomMovie And Check Status Code, Result Size, Fields, Service Method Calling")
     void testGetRandomMovie_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie1, movie2);
-        when(movieService.getThreeRandom()).thenReturn(movies);
+        when(movieService.getRandom()).thenReturn(movies);
         when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
         when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
         mockMvc.perform( MockMvcRequestBuilders
@@ -275,11 +270,11 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].rating").value(10.0))
                 .andExpect(jsonPath("$[1].rating").value(9.0));
-        verify(movieService).getThreeRandom();
+        verify(movieService).getRandom();
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("""
     Test GetMoviesByGenreId And Rating Ascending Order And Check Status Code,
     Result Size, Fields, Service Method Calling""")
@@ -295,7 +290,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("Test GetMoviesByGenreId And Rating Ascending Order If Genre Not Found")
     void testGetMoviesByGenreIdAndRatingAsc_IfGenreNotFound() throws Exception {
         String sortingOrder = "asc";
@@ -308,7 +303,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("""
     Test GetMoviesByGenreId And Rating Descending Order And Check Status Code,
     Result Size, Fields, Service Method Calling""")
@@ -324,7 +319,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("Test GetMoviesByGenreId And Rating Descending Order If Genre Not Found")
     void testGetMoviesByGenreIdAndRatingDesc_IfGenreNotFound() throws Exception {
         String sortingOrder = "desc";
@@ -337,7 +332,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("""
     Test GetMoviesByGenreId And No Rating Ordering And Check Status Code,
     Result Size, Fields, Service Method Calling""")
@@ -353,7 +348,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("Test GetMoviesByGenreId And No Rating Ordering If Genre Not Found")
     void testGetMoviesByGenreIdAndNoRatingOrdering_IfGenreNotFound() throws Exception {
         String sortingOrder = "";
@@ -366,7 +361,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("Test GetMovieById And Check Status Code")
     void testGetMovieById_AndCheckStatus() throws Exception {
         String currency = "UAH";
@@ -382,7 +377,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("Test GetMovieById With Defined Currency And Check Status Code")
     void testGetMovieByIdWithDefinedCurrency_AndCheckStatus() throws Exception {
         String currency = "USD";
@@ -398,7 +393,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("Test GetMovieById If Movie Not Found")
     void testGetMovieById_IfMovieNotFound() throws Exception {
         String currency = "UAH";
@@ -411,7 +406,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser
     @DisplayName("Test GetMovieById If Wrong Currency")
     void testGetMovieById_IfWrongCurrency() throws Exception {
         String currency = "GHTR";
@@ -424,7 +419,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser(roles = {"ADMIN"})
     @DisplayName("Test Save And Check Status Code")
     void testSave_AndCheckStatus() throws Exception {
         when(movieService.saveMovieWithGenresAndCountries(movieDto1)).thenReturn(movieWithCountriesAndGenresDto);
@@ -439,7 +434,7 @@ class MovieControllerTest {
     }
 
     @Test
-    @WithUserDetails("user@gmail.com")
+    @WithMockUser(roles = {"ADMIN"})
     @DisplayName("Test Update And Check Status Code")
     void testUpdate_AndCheckStatus() throws Exception {
         when(movieService.updateMovieWithGenresAndCountries(1L, movieDto1)).thenReturn(movieWithCountriesAndGenresDto);

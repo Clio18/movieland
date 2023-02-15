@@ -4,28 +4,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.tteam.movieland.AbstractBaseITest;
-import com.tteam.movieland.entity.User;
+import com.tteam.movieland.config.QueryCountTestConfig;
 import com.tteam.movieland.request.ReviewRequest;
-import com.tteam.movieland.security.model.Role;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Set;
-
+import static com.vladmihalcea.sql.SQLStatementCountValidator.assertSelectCount;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DBRider
 @AutoConfigureMockMvc
-class DbRiderReviewControllerTest extends AbstractBaseITest {
+@Import({QueryCountTestConfig.class})
+class ReviewControllerIT extends AbstractBaseITest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,7 +31,7 @@ class DbRiderReviewControllerTest extends AbstractBaseITest {
     protected ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser(username = "user", roles = "USER")
+    @WithMockUser
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test GetAll Reviews By Movie Id")
     void testGetAllReviewsByMovieId() throws Exception {
@@ -42,13 +39,12 @@ class DbRiderReviewControllerTest extends AbstractBaseITest {
                         .get("/api/v1/reviews/movie/{movieId}", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(content().json(getResponseAsString("response/reviews/get-all-reviews-by-movie-id.json")));
+        assertSelectCount(4);
     }
 
     @Test
-    @WithMockUser(username = "user", roles = "USER")
+    @WithMockUser
     @DataSet(value = "all_dataset.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @DisplayName("Test Get Review By Id")
     void testGetReviewById() throws Exception {
@@ -57,6 +53,7 @@ class DbRiderReviewControllerTest extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(getResponseAsString("response/reviews/get-review-by-id.json")));
+        assertSelectCount(1);
     }
 
     //TODO: principal is null in controller!!!
