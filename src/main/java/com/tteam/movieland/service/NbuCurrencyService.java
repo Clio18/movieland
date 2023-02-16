@@ -1,25 +1,26 @@
 package com.tteam.movieland.service;
 
+import com.tteam.movieland.client.RawCurrencyClient;
 import com.tteam.movieland.service.model.Currency;
 import com.tteam.movieland.service.model.RawCurrency;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 @Slf4j
 @Service
 public class NbuCurrencyService implements CurrencyService {
-    @Value("${service.pathToCurrenciesRatesInJson}")
-    private String PATH;
-    private List<RawCurrency> currencyList;
+
+    @Autowired
+    RawCurrencyClient rawCurrencyClient;
+
+    private volatile List<RawCurrency> currencyList;
 
 
     @Override
@@ -48,12 +49,10 @@ public class NbuCurrencyService implements CurrencyService {
 
     @PostConstruct
     @Scheduled(cron = "${cache.evict.cron.currency}")
+    @Retryable(retryFor = RuntimeException.class, maxAttempts = 2, backoff = @Backoff(delay = 100))
     public void updateCurrencyCache() {
-        ResponseEntity<List<RawCurrency>> responseEntity = new RestTemplate().exchange(
-                PATH, HttpMethod.GET, null, new ParameterizedTypeReference<>() {}
-        );
         log.info("Updating exchange rates cache...");
-        currencyList = responseEntity.getBody();
+        currencyList = rawCurrencyClient.findAll();
     }
 
 }

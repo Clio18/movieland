@@ -19,4 +19,4 @@ movie:
     value: 3
 
 service:
-  pathToCurrenciesRatesInJson: "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
+  pathToCurrenciesRatesInJson: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json

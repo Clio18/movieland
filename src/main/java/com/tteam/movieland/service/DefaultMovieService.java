@@ -10,6 +10,7 @@ import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.CountryRepository;
 import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
+import com.tteam.movieland.repository.cache.InMemoryCache;
 import com.tteam.movieland.service.model.Currency;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,8 @@ public class DefaultMovieService implements MovieService {
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
 
+    private final InMemoryCache<Movie> cache;
+
 
     @Value("${movie.random.value}")
     private int number;
@@ -60,14 +63,19 @@ public class DefaultMovieService implements MovieService {
 
     @Override
     public Movie getById(Long movieId, String currencyName) {
-        Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
-        Currency currency = Currency.checkCurrency(currencyName.toUpperCase());
-        if (currency != Currency.UAH) {
-            double price = currencyService.convert(movie.getPrice(), currency);
-            movie.setPrice(price);
+        Movie movieFromCache = cache.get(movieId);
+        if (movieFromCache == null) {
+            Movie movie = movieRepository.findById(movieId)
+                    .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
+            Currency currency = Currency.checkCurrency(currencyName.toUpperCase());
+            if (currency != Currency.UAH) {
+                double price = currencyService.convert(movie.getPrice(), currency);
+                movie.setPrice(price);
+            }
+            cache.add(movieId, movie);
+            return movie;
         }
-        return movie;
+        return movieFromCache;
     }
 
     @Override
