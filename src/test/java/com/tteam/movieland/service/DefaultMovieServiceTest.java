@@ -12,6 +12,7 @@ import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.CountryRepository;
 import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
+import com.tteam.movieland.repository.cache.InMemoryCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,8 +29,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultMovieServiceTest {
@@ -48,6 +48,8 @@ class DefaultMovieServiceTest {
     private Page<Movie> page;
     @Mock
     private Stream<Movie> stream;
+    @Mock
+    private InMemoryCache<Movie> cache;
 
     private MovieService movieService;
     private List<Movie> movies;
@@ -62,7 +64,7 @@ class DefaultMovieServiceTest {
 
     @BeforeEach
     void init() {
-        movieService = new DefaultMovieService(movieRepository, countryRepository, genreRepository, currencyService, mapper);
+        movieService = new DefaultMovieService(movieRepository, countryRepository, genreRepository, currencyService, mapper, cache);
 
         Country usa = Country.builder()
                 .countryName("usa")
@@ -204,6 +206,14 @@ class DefaultMovieServiceTest {
     void testUpdate_AndCheckExceptionThrown() {
         when(movieRepository.findById(1L)).thenThrow(MovieNotFoundException.class);
         assertThrows(MovieNotFoundException.class, () -> movieService.updateMovieWithGenresAndCountries(1L, movieDto));
+    }
+
+    @Test
+    @DisplayName("Test Cache Calling And Check No Interactions With DB")
+    void testCache_CheckNoInteractionsWithDB(){
+        when(cache.get(1L)).thenReturn(movie1);
+        movieService.getById(1L, "UAH");
+        verifyNoInteractions(movieRepository);
     }
 
 }

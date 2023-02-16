@@ -16,10 +16,10 @@ import java.util.List;
 public class CachedGenreRepository implements GenreRepository {
 
     private final JpaGenreRepository jpaGenreRepository;
-    private List<Genre> cachedGenreList;
+    private volatile List<Genre> cachedGenreList;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Genre> findAll() {
         log.info("Get cached genres list.");
         if (cachedGenreList.isEmpty()) {
