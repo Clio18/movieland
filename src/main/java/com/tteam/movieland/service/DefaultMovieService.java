@@ -19,10 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -37,9 +34,7 @@ public class DefaultMovieService implements MovieService {
     private final JpaGenreRepository genreRepository;
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
-
     private final InMemoryCache<Movie> cache;
-
 
     @Value("${movie.random.value}")
     private int number;
@@ -63,8 +58,8 @@ public class DefaultMovieService implements MovieService {
 
     @Override
     public Movie getById(Long movieId, String currencyName) {
-        Movie movieFromCache = cache.get(movieId);
-        if (movieFromCache == null) {
+        Optional<Movie> optionalMovie = cache.get(movieId);
+        if (optionalMovie.isEmpty()) {
             Movie movie = movieRepository.findById(movieId)
                     .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
             Currency currency = Currency.checkCurrency(currencyName.toUpperCase());
@@ -75,7 +70,7 @@ public class DefaultMovieService implements MovieService {
             cache.add(movieId, movie);
             return movie;
         }
-        return movieFromCache;
+        return optionalMovie.get();
     }
 
     @Override
@@ -116,12 +111,15 @@ public class DefaultMovieService implements MovieService {
 
     @Override
     public MovieWithCountriesAndGenresDto updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto) {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(
-                () -> new MovieNotFoundException("Movie was not found by provided id: " + movieId));
-        Movie updatedMovie = mapper.update(movie, movieDto);
+        Optional<Movie> optionalMovie = cache.get(movieId);
 
+        Movie movieForUpdate = optionalMovie.orElseGet(() -> movieRepository.findById(movieId).orElseThrow(
+                () -> new MovieNotFoundException("Movie was not found by provided id: " + movieId)));
+
+        Movie updatedMovie = mapper.update(movieForUpdate, movieDto);
         enrichParallel(movieDto, updatedMovie);
         movieRepository.save(updatedMovie);
+        cache.add(movieId, updatedMovie);
         return mapper.toWithCountriesAndGenresDto(updatedMovie);
     }
 
@@ -153,7 +151,7 @@ public class DefaultMovieService implements MovieService {
 
         try (var cachedPool = Executors.newCachedThreadPool()) {
             cachedPool.invokeAll(Set.of(taskCountry, taskGenre), 5, TimeUnit.SECONDS);
-        } catch (InterruptedException e){
+        } catch (InterruptedException e) {
             throw new RuntimeException("Exception from ThreadPool", e);
         }
     }

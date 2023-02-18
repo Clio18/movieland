@@ -25,10 +25,9 @@ public class InMemoryCache<T> implements Cache<T> {
     }
 
     @Override
-    public T get(Long key) {
+    public Optional<T> get(Long key) {
         return Optional.ofNullable(cache.get(key))
-                .map(SoftReference::get)
-                .orElse(null);
+                .map(SoftReference::get);
     }
 }
 
