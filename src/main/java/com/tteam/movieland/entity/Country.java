@@ -8,7 +8,6 @@ import java.util.Objects;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,20 +19,20 @@ public class Country {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", length = 100)
-    private String countryName;
+    @Column(length = 100)
+    private String name;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Country country = (Country) o;
-        return countryName != null && Objects.equals(countryName, country.countryName);
+        return name != null && Objects.equals(name, country.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, countryName);
+        return Objects.hash(id, name);
     }
 
 }
