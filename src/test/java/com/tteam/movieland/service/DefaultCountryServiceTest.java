@@ -27,10 +27,10 @@ class DefaultCountryServiceTest {
     @BeforeEach
     void init() {
         Country country1 = Country.builder()
-                .countryName("ukraine")
+                .name("ukraine")
                 .build();
         Country country2 = Country.builder()
-                .countryName("usa")
+                .name("usa")
                 .build();
         countryList = Arrays.asList(country1, country2);
         countryService = new DefaultCountryService(countryRepository);

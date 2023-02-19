@@ -12,7 +12,6 @@ import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.CountryRepository;
 import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
-import com.tteam.movieland.repository.cache.InMemoryCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,8 +47,6 @@ class DefaultMovieServiceTest {
     private Page<Movie> page;
     @Mock
     private Stream<Movie> stream;
-    @Mock
-    private InMemoryCache<Movie> cache;
 
     private MovieService movieService;
     private List<Movie> movies;
@@ -64,21 +61,21 @@ class DefaultMovieServiceTest {
 
     @BeforeEach
     void init() {
-        movieService = new DefaultMovieService(movieRepository, countryRepository, genreRepository, currencyService, mapper, cache);
+        movieService = new DefaultMovieService(movieRepository, countryRepository, genreRepository, currencyService, mapper);
 
         Country usa = Country.builder()
-                .countryName("usa")
+                .name("usa")
                 .build();
         Country australia = Country.builder()
-                .countryName("australia")
+                .name("australia")
                 .build();
         countries = Set.of(usa, australia);
 
         Genre drama = Genre.builder()
-                .genreName("drama")
+                .name("drama")
                 .build();
         Genre comedy = Genre.builder()
-                .genreName("comedy")
+                .name("comedy")
                 .build();
         genres = Set.of(drama, comedy);
 
@@ -124,13 +121,13 @@ class DefaultMovieServiceTest {
                 .rating(10.0)
                 .poster("url/")
                 .countriesDto(Set.of(
-                        CountryDto.builder().countryName("usa").build(),
-                        CountryDto.builder().countryName("ukraine").build()
+                        CountryDto.builder().name("usa").build(),
+                        CountryDto.builder().name("ukraine").build()
                 ))
                 .genresDto(Set.of(
-                        GenreDto.builder().genreName("comedy").build(),
-                        GenreDto.builder().genreName("love").build(),
-                        GenreDto.builder().genreName("drama").build()
+                        GenreDto.builder().name("comedy").build(),
+                        GenreDto.builder().name("love").build(),
+                        GenreDto.builder().name("drama").build()
                 ))
                 .build();
         movies = List.of(movie1, movie2);
@@ -158,7 +155,7 @@ class DefaultMovieServiceTest {
         when(movieRepository.findById(1L)).thenReturn(Optional.ofNullable(movie1));
         Movie actualMovie = movieService.getById(1L, currency);
         assertNotNull(actualMovie);
-        assertEquals(movie1, actualMovie);
+        assertEquals(movie1.getNameUkr(), actualMovie.getNameUkr());
         verify(movieRepository).findById(1L);
     }
 
@@ -185,7 +182,7 @@ class DefaultMovieServiceTest {
     @DisplayName("Test update and check result is not null, contains lists of countries and genres, verify methods call")
     void testUpdate_AndCheckNotNullResultAndMethodCall() {
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movie1));
-        when(mapper.update(movie1, movieDto)).thenReturn(movie1);
+        when(mapper.update(any(Movie.class), eq(movieDto))).thenReturn(movie1);
         when(countryRepository.findAllById(movieDto.getCountriesId())).thenReturn(new ArrayList<>(countries));
         when(genreRepository.findAllById(movieDto.getGenresId())).thenReturn(new ArrayList<>(genres));
         when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
@@ -211,31 +208,33 @@ class DefaultMovieServiceTest {
     @Test
     @DisplayName("Test Cached GetById Calling And Check No Interactions With DB")
     void testCachedGetById_CheckNoInteractionsWithDB(){
-        when(cache.get(1L)).thenReturn(Optional.of(movie1));
+        when(movieRepository.findById(1L)).thenReturn(Optional.of(movie1));
         movieService.getById(1L, "UAH");
-        verifyNoInteractions(movieRepository);
+        movieService.getById(1L, "UAH");
+        verify(movieRepository, times(1)).findById(1L);
     }
 
     @Test
     @DisplayName("Test Cached Update Calling And Check No Interactions With DB")
     void testCachedUpdate_CheckNoInteractionsWithDB(){
-        when(cache.get(1L)).thenReturn(Optional.of(movie1));
+        when(movieRepository.findById(1L)).thenReturn(Optional.of(movie1));
 
-        when(mapper.update(movie1, movieDto)).thenReturn(movie1);
+        when(mapper.update(any(Movie.class), eq(movieDto))).thenReturn(movie1);
         when(countryRepository.findAllById(movieDto.getCountriesId())).thenReturn(new ArrayList<>(countries));
         when(genreRepository.findAllById(movieDto.getGenresId())).thenReturn(new ArrayList<>(genres));
         when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
 
-        MovieWithCountriesAndGenresDto movieWithCountriesAndGenresDto = movieService.updateMovieWithGenresAndCountries(1L, movieDto);
+        movieService.updateMovieWithGenresAndCountries(1L, movieDto);
+        MovieWithCountriesAndGenresDto movieFromCache = movieService.updateMovieWithGenresAndCountries(1L, movieDto);
         assertAll(
-                () -> assertNotNull(movieWithCountriesAndGenresDto),
-                () -> assertEquals(2, movieWithCountriesAndGenresDto.getCountriesDto().size()),
-                () -> assertEquals(3, movieWithCountriesAndGenresDto.getGenresDto().size()));
+                () -> assertNotNull(movieFromCache),
+                () -> assertEquals(2, movieFromCache.getCountriesDto().size()),
+                () -> assertEquals(3, movieFromCache.getGenresDto().size()));
 
-        verify(countryRepository).findAllById(movieDto.getCountriesId());
-        verify(genreRepository).findAllById(movieDto.getGenresId());
-        verify(movieRepository).save(movie1);
-        verifyNoMoreInteractions(movieRepository);
+        verify(countryRepository, times(2)).findAllById(movieDto.getCountriesId());
+        verify(genreRepository, times(2)).findAllById(movieDto.getGenresId());
+        verify(movieRepository, times(2)).save(movie1);
+        verify(movieRepository, times(1)).findById(1L);
     }
 
 }

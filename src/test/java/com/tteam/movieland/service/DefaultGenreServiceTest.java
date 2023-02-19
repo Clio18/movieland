@@ -30,10 +30,10 @@ class DefaultGenreServiceTest {
         genreService = new DefaultGenreService(genreRepository);
 
         drama = Genre.builder()
-                .genreName("drama")
+                .name("drama")
                 .build();
         comedy = Genre.builder()
-                .genreName("comedy")
+                .name("comedy")
                 .build();
         genres = List.of(drama, comedy);
     }

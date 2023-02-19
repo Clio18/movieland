@@ -4,8 +4,8 @@ import com.tteam.movieland.client.RawCurrencyClient;
 import com.tteam.movieland.service.model.Currency;
 import com.tteam.movieland.service.model.RawCurrency;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,10 +15,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class NbuCurrencyService implements CurrencyService {
 
-    @Autowired
-    RawCurrencyClient rawCurrencyClient;
+    private final RawCurrencyClient rawCurrencyClient;
 
     private volatile List<RawCurrency> currencyList;
 
@@ -36,8 +36,10 @@ public class NbuCurrencyService implements CurrencyService {
         return initPrice / rate;
     }
 
+    //map
+
     public double actualRateByCurrency(Currency currency) {
-        if (currencyList == null || currencyList.isEmpty()) {
+        if (currencyList == null) {
             updateCurrencyCache();
         }
          return currencyList.stream()
