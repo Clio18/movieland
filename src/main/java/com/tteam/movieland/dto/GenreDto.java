@@ -9,5 +9,5 @@ import lombok.*;
 @Builder
 public class GenreDto {
     private Long id;
-    private String genreName;
+    private String name;
 }

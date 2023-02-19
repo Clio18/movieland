@@ -1,36 +1,58 @@
 package com.tteam.movieland.repository;
 
 import com.tteam.movieland.entity.Genre;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
 public class CachedGenreRepository implements GenreRepository {
-
     private final JpaGenreRepository jpaGenreRepository;
-    private List<Genre> cachedGenreList;
+    private volatile List<Genre> cachedGenreList;
+    private final ReentrantLock lock = new ReentrantLock();
 
     @Override
-    @Transactional
     public List<Genre> findAll() {
-        log.info("Get cached genres list.");
-        if (cachedGenreList.isEmpty()) {
+        if (cachedGenreList == null || cachedGenreList.isEmpty()) {
             updateGenresCache();
         }
-        return new ArrayList<>(cachedGenreList);
+        lock.lock();
+        try {
+            log.info("Get cached genres list.");
+            return deepCopyList(cachedGenreList);
+        } finally {
+            lock.unlock();
+        }
     }
 
-    @Scheduled(fixedRateString = "${cache.evict.interval.genres}")
+    @PostConstruct
+    @Scheduled(initialDelayString = "${cache.evict.interval.genres}",
+            fixedDelayString = "${cache.evict.interval.genres}", timeUnit = TimeUnit.HOURS)
     void updateGenresCache() {
-        log.info("Updating genres cache...");
-        cachedGenreList = jpaGenreRepository.findAll();
+        lock.lock();
+        try {
+            log.info("Updating genres cache...");
+            cachedGenreList = jpaGenreRepository.findAll();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    List<Genre> deepCopyList(List<Genre> originalList) {
+        List<Genre> deepCopyList = new ArrayList<>(originalList.size());
+        for (Genre genre : originalList) {
+            Genre copyGenre = new Genre(genre.getId(), genre.getName());
+            deepCopyList.add(copyGenre);
+        }
+        return deepCopyList;
     }
 }

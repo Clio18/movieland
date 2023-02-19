@@ -9,7 +9,7 @@ spring:
 cache:
   evict:
     interval:
-      genres: 14400000
+      genres: 4
 
 movie:
   random:

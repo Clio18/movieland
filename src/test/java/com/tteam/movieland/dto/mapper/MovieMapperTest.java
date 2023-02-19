@@ -23,21 +23,21 @@ class MovieMapperTest {
     void init(){
         Country usa = Country.builder()
                 .id(1L)
-                .countryName("usa")
+                .name("usa")
                 .build();
         Country australia = Country.builder()
                 .id(2L)
-                .countryName("australia")
+                .name("australia")
                 .build();
         Set<Country> countries = Set.of(usa, australia);
 
         Genre drama = Genre.builder()
                 .id(1L)
-                .genreName("drama")
+                .name("drama")
                 .build();
         Genre comedy = Genre.builder()
                 .id(2L)
-                .genreName("comedy")
+                .name("comedy")
                 .build();
         Set<Genre> genres = Set.of(drama, comedy);
 
