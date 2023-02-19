@@ -61,18 +61,18 @@ class MovieControllerTest extends AbstractBaseITest {
     @BeforeEach
     void init(){
         Country usa = Country.builder()
-                .countryName("usa")
+                .name("usa")
                 .build();
         Country australia = Country.builder()
-                .countryName("australia")
+                .name("australia")
                 .build();
         Set<Country> countries = Set.of(usa, australia);
 
         Genre drama = Genre.builder()
-                .genreName("drama")
+                .name("drama")
                 .build();
         Genre comedy = Genre.builder()
-                .genreName("comedy")
+                .name("comedy")
                 .build();
         Set<Genre> genres = Set.of(drama, comedy);
 
@@ -146,13 +146,13 @@ class MovieControllerTest extends AbstractBaseITest {
                 .poster("url/")
                 .description("Best movie")
                 .countriesDto(Set.of(
-                        CountryDto.builder().countryName("usa").build(),
-                        CountryDto.builder().countryName("ukraine").build()
+                        CountryDto.builder().name("usa").build(),
+                        CountryDto.builder().name("ukraine").build()
                 ))
                 .genresDto(Set.of(
-                        GenreDto.builder().genreName("comedy").build(),
-                        GenreDto.builder().genreName("love").build(),
-                        GenreDto.builder().genreName("drama").build()
+                        GenreDto.builder().name("comedy").build(),
+                        GenreDto.builder().name("love").build(),
+                        GenreDto.builder().name("drama").build()
                 ))
                 .build();
     }

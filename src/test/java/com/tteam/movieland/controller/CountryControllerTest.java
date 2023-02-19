@@ -44,17 +44,17 @@ class CountryControllerTest extends AbstractBaseITest {
     @BeforeEach
     void init() {
         country1 = Country.builder()
-                .countryName("ukraine")
+                .name("ukraine")
                 .build();
         country2 = Country.builder()
-                .countryName("usa")
+                .name("usa")
                 .build();
         countryList = Arrays.asList(country1, country2);
         countryDto1 = CountryDto.builder()
-                .countryName("ukraine")
+                .name("ukraine")
                 .build();
         countryDto2 = CountryDto.builder()
-                .countryName("usa")
+                .name("usa")
                 .build();
     }
 

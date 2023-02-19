@@ -11,6 +11,7 @@ import lombok.*;
 public class CountryDto {
     private Long id;
 
-    @JsonProperty("name")
-    private String countryName;
+    @JsonProperty
+    private String name;
 }
+

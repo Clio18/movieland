@@ -10,7 +10,7 @@ import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.CountryRepository;
 import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
-import com.tteam.movieland.repository.cache.InMemoryCache;
+import com.tteam.movieland.cache.SoftReferenceCache;
 import com.tteam.movieland.service.model.Currency;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @Service
 @Getter
@@ -34,14 +35,13 @@ public class DefaultMovieService implements MovieService {
     private final JpaGenreRepository genreRepository;
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
-    private final InMemoryCache<Movie> cache;
+    private final SoftReferenceCache<Long, Movie> cache = new SoftReferenceCache<>();
 
     @Value("${movie.random.value}")
     private int number;
 
-    private final Random random = new Random();
+    private static final Random RANDOM = new Random();
 
-    @Override
     public List<Movie> getRandom() {
 
         /*The problem with select que from Question que order by RAND()
@@ -51,26 +51,8 @@ public class DefaultMovieService implements MovieService {
         //to start from 0
         long count = movieRepository.count() - 1;
         long range = count / number;
-        long index = random.nextLong((range));
+        long index = RANDOM.nextLong((range));
         return movieRepository.findAll(PageRequest.of((int) index, number)).stream().toList();
-    }
-
-
-    @Override
-    public Movie getById(Long movieId, String currencyName) {
-        Optional<Movie> optionalMovie = cache.get(movieId);
-        if (optionalMovie.isEmpty()) {
-            Movie movie = movieRepository.findById(movieId)
-                    .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
-            Currency currency = Currency.checkCurrency(currencyName.toUpperCase());
-            if (currency != Currency.UAH) {
-                double price = currencyService.convert(movie.getPrice(), currency);
-                movie.setPrice(price);
-            }
-            cache.add(movieId, movie);
-            return movie;
-        }
-        return optionalMovie.get();
     }
 
     @Override
@@ -111,16 +93,42 @@ public class DefaultMovieService implements MovieService {
 
     @Override
     public MovieWithCountriesAndGenresDto updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto) {
-        Optional<Movie> optionalMovie = cache.get(movieId);
-
-        Movie movieForUpdate = optionalMovie.orElseGet(() -> movieRepository.findById(movieId).orElseThrow(
-                () -> new MovieNotFoundException("Movie was not found by provided id: " + movieId)));
-
-        Movie updatedMovie = mapper.update(movieForUpdate, movieDto);
+        Movie movie = getMovie(movieId, movieRepository, cache);
+        Movie updatedMovie = mapper.update(movie, movieDto);
         enrichParallel(movieDto, updatedMovie);
         movieRepository.save(updatedMovie);
-        cache.add(movieId, updatedMovie);
         return mapper.toWithCountriesAndGenresDto(updatedMovie);
+    }
+
+    @Override
+    public Movie getById(Long movieId, String currencyName) {
+        Movie movie = getMovie(movieId, movieRepository, cache);
+        Currency currency = Currency.checkCurrency(currencyName.toUpperCase());
+        if (currency != Currency.UAH) {
+            double price = currencyService.convert(movie.getPrice(), currency);
+            movie.setPrice(price);
+        }
+
+        return movie;
+    }
+
+    private Movie getMovie(Long movieId, MovieRepository movieRepository, SoftReferenceCache<Long, Movie> cache) {
+        Supplier<Movie> supplier = () -> movieRepository.findById(movieId)
+                .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
+        Movie movie = cache.getOrPut(movieId, supplier);
+        return Movie.builder()
+                .id(movie.getId())
+                .nameUkr(movie.getNameUkr())
+                .nameNative(movie.getNameNative())
+                .yearOfRelease(movie.getYearOfRelease())
+                .description(movie.getDescription())
+                .price(movie.getPrice())
+                .rating(movie.getRating())
+                .countries(movie.getCountries())
+                .poster(movie.getPoster())
+                .genres(movie.getGenres())
+                .reviews(movie.getReviews())
+                .build();
     }
 
 

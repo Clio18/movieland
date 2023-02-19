@@ -23,7 +23,7 @@ public interface MovieMapper {
     @IterableMapping(qualifiedByName="mapCountryDtoWithoutData")
     static Set<CountryDto> mapToSetCountryDto(Set<Country> value) {
         return value.stream().map(c -> CountryDto.builder()
-                        .countryName(c.getCountryName())
+                        .name(c.getName())
                         .build())
                 .collect(Collectors.toSet());
     }
@@ -37,7 +37,7 @@ public interface MovieMapper {
     @IterableMapping(qualifiedByName="mapGenreDtoWithoutData")
     static Set<GenreDto> mapToSetGenreDto(Set<Genre> value){
         return value.stream().map(g -> GenreDto.builder()
-                        .genreName(g.getGenreName())
+                        .name(g.getName())
                         .build())
                 .collect(Collectors.toSet());
     }
