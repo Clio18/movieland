@@ -22,6 +22,7 @@ import java.util.Set;
 import static com.vladmihalcea.sql.SQLStatementCountValidator.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DBRider
@@ -234,10 +235,12 @@ class MovieControllerIT extends AbstractBaseITest {
                         .characterEncoding("utf-8")
                 )
                 .andExpect(status().isOk());
-        assertSelectCount(3);
-        assertDeleteCount(2);
-        assertUpdateCount(1);
-        assertInsertCount(2);
+
+        assertAll(
+                () -> assertSelectCount(4),
+                () -> assertDeleteCount(2),
+                () -> assertUpdateCount(1),
+                () -> assertInsertCount(1));
     }
 
 }

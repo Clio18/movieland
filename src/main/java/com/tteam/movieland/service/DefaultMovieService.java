@@ -17,12 +17,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 @Service
@@ -36,6 +35,8 @@ public class DefaultMovieService implements MovieService {
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
     private final SoftReferenceCache<Long, Movie> cache = new SoftReferenceCache<>();
+
+    private final ExecutorService cachedPool = Executors.newCachedThreadPool();
 
     @Value("${movie.random.value}")
     private int number;
@@ -86,7 +87,7 @@ public class DefaultMovieService implements MovieService {
     public MovieWithCountriesAndGenresDto saveMovieWithGenresAndCountries(MovieDto movieDto) {
         Movie movie = mapper.toMovie(movieDto);
 
-        enrichParallel(movieDto, movie);
+        enrichFuture(movieDto, movie);
         movieRepository.save(movie);
         return mapper.toWithCountriesAndGenresDto(movie);
     }
@@ -95,7 +96,7 @@ public class DefaultMovieService implements MovieService {
     public MovieWithCountriesAndGenresDto updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto) {
         Movie movie = getMovie(movieId, movieRepository, cache);
         Movie updatedMovie = mapper.update(movie, movieDto);
-        enrichParallel(movieDto, updatedMovie);
+        enrichFuture(movieDto, updatedMovie);
         movieRepository.save(updatedMovie);
         return mapper.toWithCountriesAndGenresDto(updatedMovie);
     }
@@ -131,7 +132,6 @@ public class DefaultMovieService implements MovieService {
                 .build();
     }
 
-
     private void enrich(MovieDto movieDto, Movie updatedMovie) {
         Set<Long> countriesIds = movieDto.getCountriesId();
         Set<Country> countries = new HashSet<>(countryRepository.findAllById(countriesIds));
@@ -157,12 +157,52 @@ public class DefaultMovieService implements MovieService {
             return updatedMovie;
         };
 
-        try (var cachedPool = Executors.newCachedThreadPool()) {
+        try {
             cachedPool.invokeAll(Set.of(taskCountry, taskGenre), 5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             throw new RuntimeException("Exception from ThreadPool", e);
         }
     }
 
+    @Async
+    private CompletableFuture<List<Country>> fetchCountries(Set<Long> countriesIds) {
+        return CompletableFuture.supplyAsync(() -> countryRepository.findAllById(countriesIds));
+    }
 
+    @Async
+    private CompletableFuture<List<Genre>> fetchGenres(Set<Long> genresIds) {
+        return CompletableFuture.supplyAsync(() -> genreRepository.findAllById(genresIds));
+    }
+
+    private void enrichFuture (MovieDto movieDto, Movie updatedMovie){
+        Set<Long> countriesIds = movieDto.getCountriesId();
+        Set<Long> genresIds = movieDto.getGenresId();
+
+        CompletableFuture<List<Country>> countriesFuture = fetchCountries(countriesIds);
+        CompletableFuture<List<Genre>> genresFuture = fetchGenres(genresIds);
+
+        CompletableFuture.allOf(countriesFuture, genresFuture).join();
+
+        try {
+            Set<Country> countries = new HashSet<>(countriesFuture.get(5, TimeUnit.SECONDS));
+            Set<Genre> genres = new HashSet<>(genresFuture.get(5, TimeUnit.SECONDS));
+
+            updatedMovie.setGenres(genres);
+            updatedMovie.setCountries(countries);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException("Enrichment was failed: ", e);
+        }
+    }
+
+    void loadFunc(){
+        int sum = 0;
+        for (int i = 0; i < 100_000; i++) {
+            for (int j = 0; j < 100_000; j++) {
+                for (int k = 0; k < 100; k++) {
+                    sum = i + j + k;
+                }
+            }
+        }
+        System.out.println(sum);
+    }
 }
