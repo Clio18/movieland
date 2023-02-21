@@ -88,33 +88,34 @@ class MovieControllerIT extends AbstractBaseITest {
                         .get("/api/v1/movies/random")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id", notNullValue()))
-                .andExpect(jsonPath("$[0].nameUkr", notNullValue()))
-                .andExpect(jsonPath("$[0].nameNative", notNullValue()))
-                .andExpect(jsonPath("$[0].yearOfRelease", notNullValue()))
-                .andExpect(jsonPath("$[0].description", notNullValue()))
-                .andExpect(jsonPath("$[0].price", notNullValue()))
-                .andExpect(jsonPath("$[0].rating", notNullValue()))
-                .andExpect(jsonPath("$[0].picturePath", notNullValue()))
+                .andExpectAll(
+                    jsonPath("$", hasSize(3)),
+                    jsonPath("$[0].id", notNullValue()),
+                    jsonPath("$[0].nameUkr", notNullValue()),
+                    jsonPath("$[0].nameNative", notNullValue()),
+                    jsonPath("$[0].yearOfRelease", notNullValue()),
+                    jsonPath("$[0].description", notNullValue()),
+                    jsonPath("$[0].price", notNullValue()),
+                    jsonPath("$[0].rating", notNullValue()),
+                    jsonPath("$[0].picturePath", notNullValue()),
 
-                .andExpect(jsonPath("$[1].id", notNullValue()))
-                .andExpect(jsonPath("$[1].nameUkr", notNullValue()))
-                .andExpect(jsonPath("$[1].nameNative", notNullValue()))
-                .andExpect(jsonPath("$[1].yearOfRelease", notNullValue()))
-                .andExpect(jsonPath("$[1].description", notNullValue()))
-                .andExpect(jsonPath("$[1].price", notNullValue()))
-                .andExpect(jsonPath("$[1].rating", notNullValue()))
-                .andExpect(jsonPath("$[1].picturePath", notNullValue()))
+                    jsonPath("$[1].id", notNullValue()),
+                    jsonPath("$[1].nameUkr", notNullValue()),
+                    jsonPath("$[1].nameNative", notNullValue()),
+                    jsonPath("$[1].yearOfRelease", notNullValue()),
+                    jsonPath("$[1].description", notNullValue()),
+                    jsonPath("$[1].price", notNullValue()),
+                    jsonPath("$[1].rating", notNullValue()),
+                    jsonPath("$[1].picturePath", notNullValue()),
 
-                .andExpect(jsonPath("$[2].id", notNullValue()))
-                .andExpect(jsonPath("$[2].nameUkr", notNullValue()))
-                .andExpect(jsonPath("$[2].nameNative", notNullValue()))
-                .andExpect(jsonPath("$[2].yearOfRelease", notNullValue()))
-                .andExpect(jsonPath("$[2].description", notNullValue()))
-                .andExpect(jsonPath("$[2].price", notNullValue()))
-                .andExpect(jsonPath("$[2].rating", notNullValue()))
-                .andExpect(jsonPath("$[2].picturePath", notNullValue())
+                    jsonPath("$[2].id", notNullValue()),
+                    jsonPath("$[2].nameUkr", notNullValue()),
+                    jsonPath("$[2].nameNative", notNullValue()),
+                    jsonPath("$[2].yearOfRelease", notNullValue()),
+                    jsonPath("$[2].description", notNullValue()),
+                    jsonPath("$[2].price", notNullValue()),
+                    jsonPath("$[2].rating", notNullValue()),
+                    jsonPath("$[2].picturePath", notNullValue())
                 );
         assertSelectCount(3);
     }
@@ -241,6 +242,46 @@ class MovieControllerIT extends AbstractBaseITest {
                 () -> assertDeleteCount(2),
                 () -> assertUpdateCount(1),
                 () -> assertInsertCount(1));
+    }
+
+    @Test
+    @WithMockUser
+    @DataSet(value = "response/movies/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
+    @ExpectedDataSet(value = "response/movies/movies_before_add.yml", ignoreCols = "id")
+    @DisplayName("Test add movie with User Role")
+    void whenTryToAddWithUserRole_then403ResponseStatusReturned() throws Exception {
+        MovieDto movieDto = MovieDto.builder().build();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/movies/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(movieDto))
+                        .characterEncoding("utf-8")
+                )
+                .andExpect(status().isForbidden());
+        assertSelectCount(0);
+        assertInsertCount(0);
+    }
+
+    @Test
+    @WithMockUser
+    @DataSet(value = "response/movies/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
+    @ExpectedDataSet(value = "response/movies/movies_before_add.yml", ignoreCols = "id")
+    @DisplayName("Test update movie with User Role")
+    void whenTryToUpdateWithUserRole_then403ResponseStatusReturned() throws Exception {
+        MovieDto movieDto = MovieDto.builder().build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/movies/{movieId}", 2L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(movieDto))
+                        .characterEncoding("utf-8")
+                )
+                .andExpect(status().isForbidden());
+
+        assertAll(
+                () -> assertSelectCount(0),
+                () -> assertDeleteCount(0),
+                () -> assertUpdateCount(0),
+                () -> assertInsertCount(0));
     }
 
 }
