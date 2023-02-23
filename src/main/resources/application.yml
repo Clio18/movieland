@@ -10,13 +10,15 @@ spring:
 cache:
   evict:
     interval:
-      genres: 14400000
+      genres: 4
     cron:
       currency: 59 30 15 * * *
 
 movie:
   random:
     value: 3
+  enrichment:
+    timeout: 5
 
 service:
   pathToCurrenciesRatesInJson: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
