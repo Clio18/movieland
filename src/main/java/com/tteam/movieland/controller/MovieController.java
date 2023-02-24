@@ -6,13 +6,14 @@ import com.tteam.movieland.dto.mapper.MovieMapper;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
@@ -44,6 +45,7 @@ public class MovieController {
     protected ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId, @RequestParam(value = "currency", defaultValue = "UAH") String currency) {
         Movie movie = movieService.getById(movieId, currency);
         MovieDto movieDto = mapper.toMovieDto(movie);
+        log.info("Get movie with id: {}", movieId);
         return ResponseEntity.ok(movieDto);
     }
 
