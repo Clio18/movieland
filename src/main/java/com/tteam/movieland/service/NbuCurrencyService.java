@@ -11,9 +11,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,8 +42,7 @@ public class NbuCurrencyService implements CurrencyService {
     }
 
     public double actualRateByCurrency(Currency currency) {
-        LocalTime timeNow = LocalTime.now();
-        if (cachedCurrency == null && timeNow.isBefore(LocalTime.of(15, 30, 0))) {
+        if (cachedCurrency == null) {
             updateCurrencyCache();
         }
         return cachedCurrency.get(currency.getNumericCode()).getRate();
@@ -60,7 +59,10 @@ public class NbuCurrencyService implements CurrencyService {
     @Scheduled(cron = "${cache.evict.cron.currency}")
     public void updateCurrencyCache() {
         log.info("Updating exchange rates cache...");
-        cachedCurrency = currencyListFromNBU.stream()
+        if (currencyListFromNBU == null) {
+            getRawCurrencyListFromNBU();
+        }
+        cachedCurrency = currencyListFromNBU.stream().filter(Objects::nonNull)
                 .collect(Collectors.toMap(RawCurrency::getNumericCode, Function.identity()));
     }
 
