@@ -11,17 +11,19 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class NbuCurrencyService implements CurrencyService {
-
     private final RawCurrencyClient rawCurrencyClient;
-
-    private volatile List<RawCurrency> currencyList;
-
+    private volatile List<RawCurrency> currencyListFromNBU;
+    private volatile Map<Integer, RawCurrency> cachedCurrency;
 
     @Override
     public double convert(double initPrice, Currency to) {
@@ -30,31 +32,36 @@ public class NbuCurrencyService implements CurrencyService {
 
     @Override
     public double convert(double initPrice, Currency from, Currency to) {
-        double rateFrom = actualRateByCurrency(from);
+        double rateFrom = 1;
+        if (from != Currency.UAH) {
+            rateFrom = actualRateByCurrency(from);
+        }
         double rateTo = actualRateByCurrency(to);
         double rate = rateTo / rateFrom;
         return initPrice / rate;
     }
 
-    //map
-
     public double actualRateByCurrency(Currency currency) {
-        if (currencyList == null) {
+        LocalTime timeNow = LocalTime.now();
+        if (cachedCurrency == null && timeNow.isBefore(LocalTime.of(15, 30, 0))) {
             updateCurrencyCache();
         }
-         return currencyList.stream()
-                 .filter(c -> c.getNumericCode() == currency.getNumericCode())
-                 .map(RawCurrency::getRate)
-                 .findFirst()
-                 .orElse(1.0);
+        return cachedCurrency.get(currency.getNumericCode()).getRate();
      }
 
     @PostConstruct
-    @Scheduled(cron = "${cache.evict.cron.currency}")
+    @Scheduled(cron = "${cache.get.cron.currency}")
     @Retryable(retryFor = RuntimeException.class, maxAttempts = 2, backoff = @Backoff(delay = 100))
+    public void getRawCurrencyListFromNBU() {
+        log.info("Updating currency list from NBU API...");
+        currencyListFromNBU = rawCurrencyClient.findAll();
+    }
+
+    @Scheduled(cron = "${cache.evict.cron.currency}")
     public void updateCurrencyCache() {
         log.info("Updating exchange rates cache...");
-        currencyList = rawCurrencyClient.findAll();
+        cachedCurrency = currencyListFromNBU.stream()
+                .collect(Collectors.toMap(RawCurrency::getNumericCode, Function.identity()));
     }
 
 }
