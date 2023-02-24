@@ -1,5 +1,6 @@
 package com.tteam.movieland.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -66,9 +67,15 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy="movie")
+    @OneToMany(mappedBy = "movie")
     @ToString.Exclude
     private Set<Review> reviews;
+
+    /*For testing purposes
+    VM option -Xmx150m
+    @ToString.Exclude
+    @Transient
+    private byte [] weight = new byte[10 * 1024 *1024];*/
 
     @Override
     public boolean equals(Object o) {
