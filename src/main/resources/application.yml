@@ -12,6 +12,9 @@ cache:
     interval:
       genres: 4
     cron:
+      currency: 0 0 0 * * *
+  get:
+    cron:
       currency: 59 30 15 * * *
 
 movie:
