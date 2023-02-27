@@ -47,10 +47,6 @@ public interface MovieMapper {
     GenreDto mapGenreDtoWithoutData(Genre source);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "yearOfRelease", ignore = true)
-    @Mapping(target = "description", ignore = true)
-    @Mapping(target = "price", ignore = true)
-    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "countries", ignore = true)
     @Mapping(target = "reviews", ignore = true)
