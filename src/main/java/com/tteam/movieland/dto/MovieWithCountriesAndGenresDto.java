@@ -16,7 +16,6 @@ import java.util.Set;
 public class MovieWithCountriesAndGenresDto {
     @JsonIgnore
     private Long id;
-    @JsonProperty("nameRussian")
     private String nameUkr;
     private String nameNative;
     private Integer yearOfRelease;

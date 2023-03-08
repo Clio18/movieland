@@ -8,7 +8,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -32,6 +34,16 @@ public class CachedGenreRepository implements GenreRepository {
         } finally {
             lock.unlock();
         }
+    }
+
+    @Override
+    public Set<Genre> findAllById(Set<Long> genresIds) {
+        return new HashSet<>(jpaGenreRepository.findAllById(genresIds));
+    }
+
+    @Override
+    public Set<Genre> findAllByMovieId(Long id) {
+        return jpaGenreRepository.findAllByMovieId(id);
     }
 
     @PostConstruct

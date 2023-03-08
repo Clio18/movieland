@@ -5,6 +5,7 @@ import com.tteam.movieland.dto.CountryDto;
 import com.tteam.movieland.dto.mapper.CountryMapper;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.service.CountryService;
+import com.tteam.movieland.service.DefaultCountryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class CountryControllerTest extends AbstractBaseITest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CountryService countryService;
+    private DefaultCountryService countryService;
 
     @MockBean
     private CountryMapper mapper;

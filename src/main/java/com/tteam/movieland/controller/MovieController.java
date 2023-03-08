@@ -4,6 +4,7 @@ import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.dto.MovieWithCountriesAndGenresDto;
 import com.tteam.movieland.dto.mapper.MovieMapper;
 import com.tteam.movieland.entity.Movie;
+import com.tteam.movieland.repository.MovieRepository;
 import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class MovieController {
+    private final MovieRepository movieRepository;
 
     private final MovieMapper mapper;
     private final MovieService movieService;
@@ -42,9 +44,9 @@ public class MovieController {
     }
 
     @GetMapping("/{movieId}")
-    protected ResponseEntity<MovieDto> getMovieById(@PathVariable Long movieId, @RequestParam(value = "currency", defaultValue = "UAH") String currency) {
+    protected ResponseEntity<MovieWithCountriesAndGenresDto> getMovieById(@PathVariable Long movieId, @RequestParam(value = "currency", defaultValue = "UAH") String currency) {
         Movie movie = movieService.getById(movieId, currency);
-        MovieDto movieDto = mapper.toMovieDto(movie);
+        MovieWithCountriesAndGenresDto movieDto = mapper.toWithCountriesAndGenresDto(movie);
         log.info("Get movie with id: {}", movieId);
         return ResponseEntity.ok(movieDto);
     }

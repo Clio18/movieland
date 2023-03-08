@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,14 @@ public class DefaultGenreService implements GenreService {
     @Override
     public List<Genre> getAll() {
         return genreRepository.findAll();
+    }
+
+    public Set<Genre> findAllById(Set<Long> genresIds) {
+        return genreRepository.findAllById(genresIds);
+    }
+
+    public Set<Genre> findAllByMovieId(Long id) {
+        return genreRepository.findAllByMovieId(id);
     }
 }
 

@@ -32,6 +32,15 @@
     </properties>
 
     <dependencies>
+
+        <!-- DEVTOOLS -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
         <!-- FEIGN -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

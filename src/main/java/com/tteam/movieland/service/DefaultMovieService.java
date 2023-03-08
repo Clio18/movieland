@@ -3,40 +3,38 @@ package com.tteam.movieland.service;
 import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.dto.MovieWithCountriesAndGenresDto;
 import com.tteam.movieland.dto.mapper.MovieMapper;
-import com.tteam.movieland.entity.Country;
-import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.MovieNotFoundException;
-import com.tteam.movieland.repository.CountryRepository;
-import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
 import com.tteam.movieland.cache.SoftReferenceCache;
+import com.tteam.movieland.service.enrichment.EnrichMovieService;
 import com.tteam.movieland.service.model.Currency;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 @Service
 @Getter
-@RequiredArgsConstructor
 public class DefaultMovieService implements MovieService {
-
+    private final EnrichMovieService enrichMovieService;
     private final MovieRepository movieRepository;
-    private final CountryRepository countryRepository;
-    private final JpaGenreRepository genreRepository;
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
-    private final SoftReferenceCache<Long, Movie> cache = new SoftReferenceCache<>();
 
-    private final ExecutorService cachedPool = Executors.newCachedThreadPool();
+    public DefaultMovieService(@Qualifier("parallel")EnrichMovieService enrichMovieService, MovieRepository movieRepository, CurrencyService currencyService, MovieMapper mapper) {
+        this.enrichMovieService = enrichMovieService;
+        this.movieRepository = movieRepository;
+        this.currencyService = currencyService;
+        this.mapper = mapper;
+    }
+
+    private final SoftReferenceCache<Long, Movie> cache = new SoftReferenceCache<>();
 
     @Value("${movie.random.value}")
     private int number;
@@ -47,7 +45,9 @@ public class DefaultMovieService implements MovieService {
 
         /*The problem with select que from Question que order by RAND()
         is that your DB will order all records before return one item.
-        So it's expensive in large data sets*/
+        So it's expensive in large data sets
+        https://stackoverflow.com/questions/24279186/fetch-random-records-using-spring-data-jpa
+        */
 
         //to start from 0
         long count = movieRepository.count() - 1;
@@ -86,8 +86,7 @@ public class DefaultMovieService implements MovieService {
     @Override
     public MovieWithCountriesAndGenresDto saveMovieWithGenresAndCountries(MovieDto movieDto) {
         Movie movie = mapper.toMovie(movieDto);
-
-        enrichFuture(movieDto, movie);
+        enrichMovieService.enrich(movieDto, movie);
         movieRepository.save(movie);
         return mapper.toWithCountriesAndGenresDto(movie);
     }
@@ -96,7 +95,7 @@ public class DefaultMovieService implements MovieService {
     public MovieWithCountriesAndGenresDto updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto) {
         Movie movie = getMovie(movieId, movieRepository, cache);
         Movie updatedMovie = mapper.update(movie, movieDto);
-        enrichFuture(movieDto, updatedMovie);
+        enrichMovieService.enrich(movieDto, updatedMovie);
         movieRepository.save(updatedMovie);
         return mapper.toWithCountriesAndGenresDto(updatedMovie);
     }
@@ -109,7 +108,7 @@ public class DefaultMovieService implements MovieService {
             double price = currencyService.convert(movie.getPrice(), currency);
             movie.setPrice(price);
         }
-
+        enrichMovieService.enrich(movie);
         return movie;
     }
 
@@ -130,79 +129,5 @@ public class DefaultMovieService implements MovieService {
                 .genres(movie.getGenres())
                 .reviews(movie.getReviews())
                 .build();
-    }
-
-    private void enrich(MovieDto movieDto, Movie updatedMovie) {
-        Set<Long> countriesIds = movieDto.getCountriesId();
-        Set<Country> countries = new HashSet<>(countryRepository.findAllById(countriesIds));
-        Set<Long> genresIds = movieDto.getGenresId();
-        Set<Genre> genres = new HashSet<>(genreRepository.findAllById(genresIds));
-
-        updatedMovie.setCountries(countries);
-        updatedMovie.setGenres(genres);
-    }
-
-    private void enrichParallel(MovieDto movieDto, Movie updatedMovie) {
-        Callable<Object> taskCountry = () -> {
-            Set<Long> countriesIds = movieDto.getCountriesId();
-            HashSet<Country> countries = new HashSet<>(countryRepository.findAllById(countriesIds));
-            updatedMovie.setCountries(countries);
-            return updatedMovie;
-        };
-
-        Callable<Object> taskGenre = () -> {
-            Set<Long> genresIds = movieDto.getGenresId();
-            HashSet<Genre> genres = new HashSet<>(genreRepository.findAllById(genresIds));
-            updatedMovie.setGenres(genres);
-            return updatedMovie;
-        };
-
-        try {
-            cachedPool.invokeAll(Set.of(taskCountry, taskGenre), 5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Exception from ThreadPool", e);
-        }
-    }
-
-    @Async
-    private CompletableFuture<List<Country>> fetchCountries(Set<Long> countriesIds) {
-        return CompletableFuture.supplyAsync(() -> countryRepository.findAllById(countriesIds));
-    }
-
-    @Async
-    private CompletableFuture<List<Genre>> fetchGenres(Set<Long> genresIds) {
-        return CompletableFuture.supplyAsync(() -> genreRepository.findAllById(genresIds));
-    }
-
-    private void enrichFuture (MovieDto movieDto, Movie updatedMovie){
-        Set<Long> countriesIds = movieDto.getCountriesId();
-        Set<Long> genresIds = movieDto.getGenresId();
-
-        CompletableFuture<List<Country>> countriesFuture = fetchCountries(countriesIds);
-        CompletableFuture<List<Genre>> genresFuture = fetchGenres(genresIds);
-
-        CompletableFuture.allOf(countriesFuture, genresFuture).join();
-
-        try {
-            Set<Country> countries = new HashSet<>(countriesFuture.get(5, TimeUnit.SECONDS));
-            Set<Genre> genres = new HashSet<>(genresFuture.get(5, TimeUnit.SECONDS));
-
-            updatedMovie.setGenres(genres);
-            updatedMovie.setCountries(countries);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            throw new RuntimeException("Enrichment was failed: ", e);
-        }
-    }
-
-    void loadFunc(){
-        int sum = 0;
-        for (int i = 0; i < 100_000; i++) {
-            for (int j = 0; j < 100_000; j++) {
-                for (int k = 0; k < 100; k++) {
-                    sum = i + j + k;
-                }
-            }
-        }
-        System.out.println(sum);
     }
 }

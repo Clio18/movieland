@@ -9,19 +9,18 @@ import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.MovieNotFoundException;
-import com.tteam.movieland.repository.CountryRepository;
-import com.tteam.movieland.repository.JpaGenreRepository;
 import com.tteam.movieland.repository.MovieRepository;
+import com.tteam.movieland.service.enrichment.EnrichMovieService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,10 +34,7 @@ class DefaultMovieServiceTest {
 
     @Mock
     private MovieRepository movieRepository;
-    @Mock
-    private CountryRepository countryRepository;
-    @Mock
-    private JpaGenreRepository genreRepository;
+
     @Mock
     private CurrencyService currencyService;
     @Mock
@@ -47,6 +43,15 @@ class DefaultMovieServiceTest {
     private Page<Movie> page;
     @Mock
     private Stream<Movie> stream;
+
+    @Qualifier("parallel")
+    @Mock
+    private EnrichMovieService enrichMovieService;
+
+    @Mock
+    private DefaultCountryService countryService;
+    @Mock
+    private DefaultGenreService genreService;
 
     private MovieService movieService;
     private List<Movie> movies;
@@ -61,7 +66,7 @@ class DefaultMovieServiceTest {
 
     @BeforeEach
     void init() {
-        movieService = new DefaultMovieService(movieRepository, countryRepository, genreRepository, currencyService, mapper);
+        movieService = new DefaultMovieService(enrichMovieService, movieRepository, currencyService, mapper);
 
         Country usa = Country.builder()
                 .name("usa")
@@ -163,8 +168,6 @@ class DefaultMovieServiceTest {
     @DisplayName("Test save and check result is not null, contains lists of countries and genres, verify methods call")
     void testSave_AndCheckNotNullResultAndMethodCall() {
         when(mapper.toMovie(movieDto)).thenReturn(movie1);
-        when(countryRepository.findAllById(movieDto.getCountriesId())).thenReturn(new ArrayList<>(countries));
-        when(genreRepository.findAllById(movieDto.getGenresId())).thenReturn(new ArrayList<>(genres));
         when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
 
         MovieWithCountriesAndGenresDto movieWithCountriesAndGenresDto = movieService.saveMovieWithGenresAndCountries(movieDto);
@@ -173,8 +176,6 @@ class DefaultMovieServiceTest {
                 () -> assertEquals(2, movieWithCountriesAndGenresDto.getCountriesDto().size()),
                 () -> assertEquals(3, movieWithCountriesAndGenresDto.getGenresDto().size()));
 
-        verify(countryRepository).findAllById(movieDto.getCountriesId());
-        verify(genreRepository).findAllById(movieDto.getGenresId());
         verify(movieRepository).save(movie1);
     }
 
@@ -183,8 +184,7 @@ class DefaultMovieServiceTest {
     void testUpdate_AndCheckNotNullResultAndMethodCall() {
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movie1));
         when(mapper.update(any(Movie.class), eq(movieDto))).thenReturn(movie1);
-        when(countryRepository.findAllById(movieDto.getCountriesId())).thenReturn(new ArrayList<>(countries));
-        when(genreRepository.findAllById(movieDto.getGenresId())).thenReturn(new ArrayList<>(genres));
+
         when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
 
         MovieWithCountriesAndGenresDto movieWithCountriesAndGenresDto = movieService.updateMovieWithGenresAndCountries(1L, movieDto);
@@ -193,8 +193,6 @@ class DefaultMovieServiceTest {
                 () -> assertEquals(2, movieWithCountriesAndGenresDto.getCountriesDto().size()),
                 () -> assertEquals(3, movieWithCountriesAndGenresDto.getGenresDto().size()));
 
-        verify(countryRepository).findAllById(movieDto.getCountriesId());
-        verify(genreRepository).findAllById(movieDto.getGenresId());
         verify(movieRepository).save(movie1);
     }
 
@@ -220,8 +218,6 @@ class DefaultMovieServiceTest {
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movie1));
 
         when(mapper.update(any(Movie.class), eq(movieDto))).thenReturn(movie1);
-        when(countryRepository.findAllById(movieDto.getCountriesId())).thenReturn(new ArrayList<>(countries));
-        when(genreRepository.findAllById(movieDto.getGenresId())).thenReturn(new ArrayList<>(genres));
         when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
 
         movieService.updateMovieWithGenresAndCountries(1L, movieDto);
@@ -231,8 +227,6 @@ class DefaultMovieServiceTest {
                 () -> assertEquals(2, movieFromCache.getCountriesDto().size()),
                 () -> assertEquals(3, movieFromCache.getGenresDto().size()));
 
-        verify(countryRepository, times(2)).findAllById(movieDto.getCountriesId());
-        verify(genreRepository, times(2)).findAllById(movieDto.getGenresId());
         verify(movieRepository, times(2)).save(movie1);
         verify(movieRepository, times(1)).findById(1L);
     }
