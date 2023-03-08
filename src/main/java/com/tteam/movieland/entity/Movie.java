@@ -48,7 +48,6 @@ public class Movie {
     @JdbcTypeCode(SqlTypes.NUMERIC)
     private Double rating;
 
-    @Fetch(FetchMode.SUBSELECT)
     @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "movie_country",
@@ -59,7 +58,6 @@ public class Movie {
     @Column(name = "picture_path", length = 500)
     private String poster;
 
-    @Fetch(FetchMode.SUBSELECT)
     @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "movie_genre",

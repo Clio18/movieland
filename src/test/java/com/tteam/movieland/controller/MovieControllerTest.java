@@ -365,14 +365,15 @@ class MovieControllerTest extends AbstractBaseITest {
     @DisplayName("Test GetMovieById And Check Status Code")
     void testGetMovieById_AndCheckStatus() throws Exception {
         String currency = "UAH";
-        when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
         when(movieService.getById(1L, currency)).thenReturn(movie1);
+        when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString((movieWithCountriesAndGenresDto))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nameUkr").value("Matrix"))
-                .andExpect(jsonPath("$.price").value(10.0));
+                .andExpect(jsonPath("$.price").value(0.27));
         verify(movieService).getById(1L, currency);
     }
 
@@ -381,11 +382,12 @@ class MovieControllerTest extends AbstractBaseITest {
     @DisplayName("Test GetMovieById With Defined Currency And Check Status Code")
     void testGetMovieByIdWithDefinedCurrency_AndCheckStatus() throws Exception {
         String currency = "USD";
-        when(mapper.toMovieDto(movie3)).thenReturn(movieDto3);
         when(movieService.getById(1L, currency)).thenReturn(movie3);
+        when(mapper.toWithCountriesAndGenresDto(movie3)).thenReturn(movieWithCountriesAndGenresDto);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, currency)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString((movieWithCountriesAndGenresDto))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nameUkr").value("Matrix"))
                 .andExpect(jsonPath("$.price").value(0.27));

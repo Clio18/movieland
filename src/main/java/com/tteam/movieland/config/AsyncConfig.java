@@ -1,23 +1,24 @@
 package com.tteam.movieland.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.*;
 
 @Configuration
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
+    @Bean
     @Override
-    public Executor getAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(20);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("AsyncThread-");
-        executor.initialize();
-        return executor;
+    public ExecutorService getAsyncExecutor() {
+        return new ThreadPoolExecutor(
+                10, // core pool size - minimum number of threads to keep in the pool
+                Integer.MAX_VALUE, // maximum pool size - maximum number of threads to allow in the pool
+                5L, // keep-alive time - time in seconds to keep an idle thread alive
+                TimeUnit.SECONDS, // time unit for the keep-alive time
+                new SynchronousQueue<>() // the queue to use for holding tasks
+        );
     }
 }

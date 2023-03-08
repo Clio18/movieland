@@ -4,6 +4,7 @@ import com.tteam.movieland.AbstractBaseITest;
 import com.tteam.movieland.dto.GenreDto;
 import com.tteam.movieland.dto.mapper.GenreMapper;
 import com.tteam.movieland.entity.Genre;
+import com.tteam.movieland.service.DefaultGenreService;
 import com.tteam.movieland.service.GenreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ class GenreControllerTest extends AbstractBaseITest {
     private GenreMapper mapper;
 
     @MockBean
-    private GenreService genreService;
+    private DefaultGenreService genreService;
 
     private Genre drama;
     private Genre comedy;
