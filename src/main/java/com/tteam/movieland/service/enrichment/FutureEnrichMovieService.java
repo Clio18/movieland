@@ -12,10 +12,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,24 +21,26 @@ public class FutureEnrichMovieService implements EnrichMovieService{
     private final DefaultCountryService countryService;
     private final DefaultGenreService genreService;
 
+    private final ExecutorService cachedPool;
+
     @Async
     private CompletableFuture<Set<Country>> fetchCountries(Set<Long> countriesIds) {
-        return CompletableFuture.supplyAsync(() -> countryService.findAllById(countriesIds));
+        return CompletableFuture.supplyAsync(() -> countryService.findAllById(countriesIds), cachedPool);
     }
 
     @Async
     private CompletableFuture<Set<Genre>> fetchGenres(Set<Long> genresIds) {
-        return CompletableFuture.supplyAsync(() -> genreService.findAllById(genresIds));
+        return CompletableFuture.supplyAsync(() -> genreService.findAllById(genresIds), cachedPool);
     }
 
     @Async
     private CompletableFuture<Set<Country>> fetchCountriesByMovieId(Long id) {
-        return CompletableFuture.supplyAsync(() -> countryService.findAllByMovieId(id));
+        return CompletableFuture.supplyAsync(() -> countryService.findAllByMovieId(id), cachedPool);
     }
 
     @Async
     private CompletableFuture<Set<Genre>> fetchGenresByMovieId(Long id) {
-        return CompletableFuture.supplyAsync(() -> genreService.findAllByMovieId(id));
+        return CompletableFuture.supplyAsync(() -> genreService.findAllByMovieId(id), cachedPool);
     }
     @Override
     public void enrich(MovieDto movieDto, Movie updatedMovie) {
@@ -60,6 +59,7 @@ public class FutureEnrichMovieService implements EnrichMovieService{
             updatedMovie.setGenres(genres);
             updatedMovie.setCountries(countries);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("Enrichment was failed: ", e);
         }
     }
@@ -80,6 +80,7 @@ public class FutureEnrichMovieService implements EnrichMovieService{
             updatedMovie.setGenres(genres);
             updatedMovie.setCountries(countries);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("Enrichment was failed: ", e);
         }
 
