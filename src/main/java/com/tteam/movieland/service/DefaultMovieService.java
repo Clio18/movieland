@@ -22,12 +22,14 @@ import java.util.function.Supplier;
 @Service
 @Getter
 public class DefaultMovieService implements MovieService {
+
     private final EnrichMovieService enrichMovieService;
     private final MovieRepository movieRepository;
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
 
-    public DefaultMovieService(@Qualifier("parallel")EnrichMovieService enrichMovieService, MovieRepository movieRepository, CurrencyService currencyService, MovieMapper mapper) {
+    //Lombok does not copy @Qualifier to the constructor
+    public DefaultMovieService(@Qualifier("parallel") EnrichMovieService enrichMovieService, MovieRepository movieRepository, CurrencyService currencyService, MovieMapper mapper) {
         this.enrichMovieService = enrichMovieService;
         this.movieRepository = movieRepository;
         this.currencyService = currencyService;

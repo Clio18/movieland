@@ -64,6 +64,7 @@ public class ParallelEnrichMovieService implements EnrichMovieService {
             log.info("Parallel enrichment should be finished");
             //loadFunc();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("Exception from ThreadPool", e);
         }
     }
@@ -104,6 +105,7 @@ public class ParallelEnrichMovieService implements EnrichMovieService {
             isStop = true;
             log.info("Parallel enrichment should be finished");
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("Exception from ThreadPool", e);
         }
     }
