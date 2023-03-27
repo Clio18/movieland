@@ -79,7 +79,7 @@ public class DefaultMovieService implements MovieService {
     @Override
     public MovieWithCountriesAndGenresDto saveMovieWithGenresAndCountries(MovieDto movieDto) {
         Movie movie = mapper.toMovie(movieDto);
-        enrichMovieService.enrich(movieDto, movie);
+        enrichMovieService.enrich(movie);
         movieRepository.save(movie);
         return mapper.toWithCountriesAndGenresDto(movie);
     }
@@ -88,7 +88,7 @@ public class DefaultMovieService implements MovieService {
     public MovieWithCountriesAndGenresDto updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto) {
         Movie movie = getMovie(movieId, movieRepository, cache);
         Movie updatedMovie = mapper.update(movie, movieDto);
-        enrichMovieService.enrich(movieDto, updatedMovie);
+        enrichMovieService.enrich(updatedMovie);
         movieRepository.save(updatedMovie);
         return mapper.toWithCountriesAndGenresDto(updatedMovie);
     }
