@@ -23,7 +23,7 @@ import static com.vladmihalcea.sql.SQLStatementCountValidator.reset;
 @SpringBootTest
 @Testcontainers
 @DirtiesContext
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "parallel"})
 public class AbstractBaseITest {
 	@Container
 	private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:latest");

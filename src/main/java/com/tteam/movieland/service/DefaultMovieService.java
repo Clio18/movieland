@@ -10,7 +10,7 @@ import com.tteam.movieland.cache.SoftReferenceCache;
 import com.tteam.movieland.service.enrichment.EnrichMovieService;
 import com.tteam.movieland.service.model.Currency;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,21 +21,12 @@ import java.util.function.Supplier;
 
 @Service
 @Getter
+@RequiredArgsConstructor
 public class DefaultMovieService implements MovieService {
-
     private final EnrichMovieService enrichMovieService;
     private final MovieRepository movieRepository;
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
-
-    //Lombok does not copy @Qualifier to the constructor
-    public DefaultMovieService(@Qualifier("parallel") EnrichMovieService enrichMovieService, MovieRepository movieRepository, CurrencyService currencyService, MovieMapper mapper) {
-        this.enrichMovieService = enrichMovieService;
-        this.movieRepository = movieRepository;
-        this.currencyService = currencyService;
-        this.mapper = mapper;
-    }
-
     private final SoftReferenceCache<Long, Movie> cache = new SoftReferenceCache<>();
 
     @Value("${movie.random.value}")
