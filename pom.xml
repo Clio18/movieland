@@ -29,6 +29,7 @@
         <spring-cloud.version>4.0.0</spring-cloud.version>
 
         <skipIT>true</skipIT>
+        <spring.profiles.active>dev</spring.profiles.active>
     </properties>
 
     <dependencies>

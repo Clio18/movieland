@@ -8,6 +8,7 @@ import com.tteam.movieland.repository.MovieRepository;
 import com.tteam.movieland.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ public class MovieController {
     private final MovieRepository movieRepository;
 
     private final MovieMapper mapper;
+
     private final MovieService movieService;
 
     @GetMapping

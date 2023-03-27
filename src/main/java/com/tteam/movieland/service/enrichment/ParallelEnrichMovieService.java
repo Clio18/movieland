@@ -4,11 +4,11 @@ import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
-import com.tteam.movieland.service.DefaultCountryService;
-import com.tteam.movieland.service.DefaultGenreService;
+import com.tteam.movieland.service.CountryService;
+import com.tteam.movieland.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -16,23 +16,21 @@ import java.util.concurrent.*;
 
 @Service
 @RequiredArgsConstructor
-@Qualifier("parallel")
 @Slf4j
+@Profile("parallel")
 public class ParallelEnrichMovieService implements EnrichMovieService {
-    private final DefaultCountryService countryService;
-    private final DefaultGenreService genreService;
+    private final CountryService countryService;
+    private final GenreService genreService;
     private final ExecutorService cachedPool;
-    private static volatile boolean isStop = false;
 
     @Override
     public void enrich(MovieDto movieDto, Movie updatedMovie) {
-        isStop = false;
-
         Callable<Object> taskCountry = () -> {
             log.info("Countries enrichment started...");
             Set<Long> countriesIds = movieDto.getCountriesId();
             //loadFunc();
             Set<Country> countries = countryService.findAllById(countriesIds);
+            boolean isStop = Thread.currentThread().isInterrupted();
             if (isStop) {
                 log.info("Parallel enrichment failed: movie has not been enriched with countries!");
                 return movieDto;
@@ -47,6 +45,7 @@ public class ParallelEnrichMovieService implements EnrichMovieService {
             log.info("Genres enrichment started...");
             Set<Long> genresIds = movieDto.getGenresId();
             Set<Genre> genres = genreService.findAllById(genresIds);
+            boolean isStop = Thread.currentThread().isInterrupted();
             if (isStop) {
                 log.info("Parallel enrichment failed: movie has not been enriched with genres!");
                 return movieDto;
@@ -60,7 +59,6 @@ public class ParallelEnrichMovieService implements EnrichMovieService {
         try {
             log.info("Parallel enrichment has been started...");
             cachedPool.invokeAll(Set.of(taskCountry, taskGenre), 2, TimeUnit.SECONDS);
-            isStop = true;
             log.info("Parallel enrichment should be finished");
             //loadFunc();
         } catch (InterruptedException e) {
@@ -71,10 +69,9 @@ public class ParallelEnrichMovieService implements EnrichMovieService {
 
     @Override
     public void enrich(Movie updatedMovie) {
-        isStop = false;
-
         Callable<Object> taskCountry = () -> {
             log.info("Countries enrichment started...");
+            boolean isStop = Thread.currentThread().isInterrupted();
             Set<Country> countries = countryService.findAllByMovieId(updatedMovie.getId());
             if (isStop) {
                 log.info("Parallel enrichment failed: movie has not been enriched with countries!");
@@ -88,6 +85,7 @@ public class ParallelEnrichMovieService implements EnrichMovieService {
 
         Callable<Object> taskGenre = () -> {
             log.info("Genres enrichment started...");
+            boolean isStop = Thread.currentThread().isInterrupted();
             Set<Genre> genres = genreService.findAllByMovieId(updatedMovie.getId());
             if (isStop) {
                 log.info("Parallel enrichment failed: movie has not been enriched with genres!");
@@ -102,7 +100,6 @@ public class ParallelEnrichMovieService implements EnrichMovieService {
         try {
             log.info("Parallel enrichment has been started...");
             cachedPool.invokeAll(Set.of(taskCountry, taskGenre), 5, TimeUnit.SECONDS);
-            isStop = true;
             log.info("Parallel enrichment should be finished");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

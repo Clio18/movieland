@@ -4,11 +4,11 @@ import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
-import com.tteam.movieland.service.DefaultCountryService;
-import com.tteam.movieland.service.DefaultGenreService;
+import com.tteam.movieland.service.CountryService;
+import com.tteam.movieland.service.GenreService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Async;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -16,34 +16,16 @@ import java.util.concurrent.*;
 
 @Service
 @RequiredArgsConstructor
-@Qualifier("future")
-public class FutureEnrichMovieService implements EnrichMovieService{
-    private final DefaultCountryService countryService;
-    private final DefaultGenreService genreService;
-
+@Profile("completableFuture")
+@Slf4j
+public class CompletableFutureEnrichMovieService implements EnrichMovieService{
+    private final CountryService countryService;
+    private final GenreService genreService;
     private final ExecutorService cachedPool;
 
-    @Async
-    private CompletableFuture<Set<Country>> fetchCountries(Set<Long> countriesIds) {
-        return CompletableFuture.supplyAsync(() -> countryService.findAllById(countriesIds), cachedPool);
-    }
-
-    @Async
-    private CompletableFuture<Set<Genre>> fetchGenres(Set<Long> genresIds) {
-        return CompletableFuture.supplyAsync(() -> genreService.findAllById(genresIds), cachedPool);
-    }
-
-    @Async
-    private CompletableFuture<Set<Country>> fetchCountriesByMovieId(Long id) {
-        return CompletableFuture.supplyAsync(() -> countryService.findAllByMovieId(id), cachedPool);
-    }
-
-    @Async
-    private CompletableFuture<Set<Genre>> fetchGenresByMovieId(Long id) {
-        return CompletableFuture.supplyAsync(() -> genreService.findAllByMovieId(id), cachedPool);
-    }
     @Override
     public void enrich(MovieDto movieDto, Movie updatedMovie) {
+        log.info("CompletableFuture enrichment has been started...");
         Set<Long> countriesIds = movieDto.getCountriesId();
         Set<Long> genresIds = movieDto.getGenresId();
 
@@ -60,12 +42,13 @@ public class FutureEnrichMovieService implements EnrichMovieService{
             updatedMovie.setCountries(countries);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Enrichment was failed: ", e);
+            throw new RuntimeException("CompletableFuture enrichment was failed: ", e);
         }
     }
 
     @Override
     public void enrich(Movie updatedMovie) {
+        log.info("CompletableFuture enrichment has been started...");
         Long id = updatedMovie.getId();
 
         CompletableFuture<Set<Country>> countriesFuture = fetchCountriesByMovieId(id);
@@ -81,9 +64,25 @@ public class FutureEnrichMovieService implements EnrichMovieService{
             updatedMovie.setCountries(countries);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Enrichment was failed: ", e);
+            throw new RuntimeException("CompletableFuture enrichment was failed: ", e);
         }
 
+    }
+
+    private CompletableFuture<Set<Country>> fetchCountries(Set<Long> countriesIds) {
+        return CompletableFuture.supplyAsync(() -> countryService.findAllById(countriesIds), cachedPool);
+    }
+
+    private CompletableFuture<Set<Genre>> fetchGenres(Set<Long> genresIds) {
+        return CompletableFuture.supplyAsync(() -> genreService.findAllById(genresIds), cachedPool);
+    }
+
+    private CompletableFuture<Set<Country>> fetchCountriesByMovieId(Long id) {
+        return CompletableFuture.supplyAsync(() -> countryService.findAllByMovieId(id), cachedPool);
+    }
+
+    private CompletableFuture<Set<Genre>> fetchGenresByMovieId(Long id) {
+        return CompletableFuture.supplyAsync(() -> genreService.findAllByMovieId(id), cachedPool);
     }
 
     //testing purposes: execution takes approx. 7 sec
