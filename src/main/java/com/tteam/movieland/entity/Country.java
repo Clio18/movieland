@@ -9,6 +9,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "countries")
