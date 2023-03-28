@@ -1,5 +1,6 @@
 package com.tteam.movieland.service;
 
+import com.tteam.movieland.cache.Cache;
 import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.dto.MovieWithCountriesAndGenresDto;
 import com.tteam.movieland.dto.mapper.MovieMapper;
@@ -27,7 +28,7 @@ public class DefaultMovieService implements MovieService {
     private final MovieRepository movieRepository;
     private final CurrencyService currencyService;
     private final MovieMapper mapper;
-    private final SoftReferenceCache<Long, Movie> cache = new SoftReferenceCache<>();
+    private final Cache<Long, Movie> cache = new SoftReferenceCache<>();
 
     @Value("${movie.random.value}")
     private int number;
@@ -78,19 +79,21 @@ public class DefaultMovieService implements MovieService {
 
     @Override
     public MovieWithCountriesAndGenresDto saveMovieWithGenresAndCountries(MovieDto movieDto) {
-        Movie movie = mapper.toMovie(movieDto);
-        enrichMovieService.enrich(movieDto, movie);
+        Movie movie = enrichMovieService.enrich(movieDto);
         movieRepository.save(movie);
         return mapper.toWithCountriesAndGenresDto(movie);
     }
 
     @Override
     public MovieWithCountriesAndGenresDto updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto) {
-        Movie movie = getMovie(movieId, movieRepository, cache);
-        Movie updatedMovie = mapper.update(movie, movieDto);
-        enrichMovieService.enrich(movieDto, updatedMovie);
-        movieRepository.save(updatedMovie);
-        return mapper.toWithCountriesAndGenresDto(updatedMovie);
+        movieDto.setId(movieId);
+        Movie movie = enrichMovieService.enrich(movieDto);
+        movieRepository.save(movie);
+        Optional<Movie> optionalMovie = cache.get(movieId);
+        if (optionalMovie.isPresent()) {
+            cache.put(movieId, movie);
+        }
+        return mapper.toWithCountriesAndGenresDto(movie);
     }
 
     @Override
@@ -101,11 +104,12 @@ public class DefaultMovieService implements MovieService {
             double price = currencyService.convert(movie.getPrice(), currency);
             movie.setPrice(price);
         }
-        enrichMovieService.enrich(movie);
+        MovieDto movieDto = mapper.toMovieDto(movie);
+        enrichMovieService.enrich(movieDto);
         return movie;
     }
 
-    private Movie getMovie(Long movieId, MovieRepository movieRepository, SoftReferenceCache<Long, Movie> cache) {
+    private Movie getMovie(Long movieId, MovieRepository movieRepository, Cache<Long, Movie> cache) {
         Supplier<Movie> supplier = () -> movieRepository.findById(movieId)
                 .orElseThrow(() -> new MovieNotFoundException("Could not find movie by id: " + movieId));
         Movie movie = cache.getOrPut(movieId, supplier);

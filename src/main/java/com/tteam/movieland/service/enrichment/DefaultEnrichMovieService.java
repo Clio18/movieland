@@ -1,6 +1,7 @@
 package com.tteam.movieland.service.enrichment;
 
 import com.tteam.movieland.dto.MovieDto;
+import com.tteam.movieland.dto.mapper.MovieMapper;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
@@ -17,30 +18,37 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Slf4j
 @Profile("default")
-public class DefaultEnrichMovieService implements EnrichMovieService{
+public class DefaultEnrichMovieService implements EnrichMovieService {
     private final CountryService countryService;
     private final GenreService genreService;
+    private final MovieMapper mapper;
 
     @Override
-    public void enrich(MovieDto movieDto, Movie updatedMovie) {
+    public Movie enrich(MovieDto movieDto) {
         log.info("Default enrichment has been started...");
         Set<Long> countriesIds = movieDto.getCountriesId();
-        Set<Country> countries = countryService.findAllById(countriesIds);
         Set<Long> genresIds = movieDto.getGenresId();
-        Set<Genre> genres = genreService.findAllById(genresIds);
 
-        updatedMovie.setCountries(countries);
-        updatedMovie.setGenres(genres);
-    }
+        Set<Country> countries;
+        if (countriesIds == null) {
+            Long id = movieDto.getId();
+            countries = countryService.findAllByMovieId(id);
+        } else {
+            countries = countryService.findAllById(countriesIds);
+        }
 
-    @Override
-    public void enrich(Movie updatedMovie) {
-        log.info("Default enrichment has been started...");
-        Long id = updatedMovie.getId();
-        Set<Country> countries = countryService.findAllByMovieId(id);
-        Set<Genre> genres = genreService.findAllByMovieId(id);
-        updatedMovie.setCountries(countries);
-        updatedMovie.setGenres(genres);
+        Set<Genre> genres;
+        if (genresIds == null) {
+            Long id = movieDto.getId();
+            genres = genreService.findAllByMovieId(id);
+        } else {
+            genres = genreService.findAllById(genresIds);
+        }
+
+        Movie movie = mapper.toMovie(movieDto);
+        movie.setCountries(countries);
+        movie.setGenres(genres);
+        return movie;
     }
 
 }
