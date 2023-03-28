@@ -1,5 +1,6 @@
 package com.tteam.movieland.service.enrichment;
 
+import com.tteam.movieland.dto.MovieDto;
 import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
@@ -16,18 +17,30 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Slf4j
 @Profile("default")
-public class DefaultEnrichMovieService implements EnrichMovieService {
+public class DefaultEnrichMovieService implements EnrichMovieService{
     private final CountryService countryService;
     private final GenreService genreService;
 
     @Override
-    public void enrich(Movie movie) {
+    public void enrich(MovieDto movieDto, Movie updatedMovie) {
         log.info("Default enrichment has been started...");
-        Long id = movie.getId();
+        Set<Long> countriesIds = movieDto.getCountriesId();
+        Set<Country> countries = countryService.findAllById(countriesIds);
+        Set<Long> genresIds = movieDto.getGenresId();
+        Set<Genre> genres = genreService.findAllById(genresIds);
+
+        updatedMovie.setCountries(countries);
+        updatedMovie.setGenres(genres);
+    }
+
+    @Override
+    public void enrich(Movie updatedMovie) {
+        log.info("Default enrichment has been started...");
+        Long id = updatedMovie.getId();
         Set<Country> countries = countryService.findAllByMovieId(id);
         Set<Genre> genres = genreService.findAllByMovieId(id);
-        movie.setCountries(countries);
-        movie.setGenres(genres);
+        updatedMovie.setCountries(countries);
+        updatedMovie.setGenres(genres);
     }
 
 }
