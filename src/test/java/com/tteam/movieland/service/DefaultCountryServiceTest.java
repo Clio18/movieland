@@ -37,7 +37,7 @@ class DefaultCountryServiceTest {
     }
 
     @Test
-    @DisplayName("test getAll and check result is not null, size, content equality, calling the repo's method")
+    @DisplayName("Test getAll and check result is not null, size, content equality, calling the repo's method")
     void testGetAllAndCheckResultNotNullSizeContentCallingTheRepositoryMethod() {
         when(countryRepository.findAll()).thenReturn(countryList);
         List<Country> countries = countryService.getAll();

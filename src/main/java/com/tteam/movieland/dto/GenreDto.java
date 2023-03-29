@@ -1,5 +1,6 @@
 package com.tteam.movieland.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @Getter
@@ -9,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class GenreDto {
+    @JsonIgnore
     private Long id;
     private String name;
 }

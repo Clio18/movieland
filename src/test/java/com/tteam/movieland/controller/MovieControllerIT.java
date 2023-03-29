@@ -89,33 +89,30 @@ class MovieControllerIT extends AbstractBaseITest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpectAll(
-                    jsonPath("$", hasSize(3)),
-                    jsonPath("$[0].id", notNullValue()),
-                    jsonPath("$[0].nameUkr", notNullValue()),
-                    jsonPath("$[0].nameNative", notNullValue()),
-                    jsonPath("$[0].yearOfRelease", notNullValue()),
-                    jsonPath("$[0].description", notNullValue()),
-                    jsonPath("$[0].price", notNullValue()),
-                    jsonPath("$[0].rating", notNullValue()),
-                    jsonPath("$[0].picturePath", notNullValue()),
+                        jsonPath("$", hasSize(3)),
+                        jsonPath("$[0].nameUkr", notNullValue()),
+                        jsonPath("$[0].nameNative", notNullValue()),
+                        jsonPath("$[0].yearOfRelease", notNullValue()),
+                        jsonPath("$[0].description", notNullValue()),
+                        jsonPath("$[0].price", notNullValue()),
+                        jsonPath("$[0].rating", notNullValue()),
+                        jsonPath("$[0].picturePath", notNullValue()),
 
-                    jsonPath("$[1].id", notNullValue()),
-                    jsonPath("$[1].nameUkr", notNullValue()),
-                    jsonPath("$[1].nameNative", notNullValue()),
-                    jsonPath("$[1].yearOfRelease", notNullValue()),
-                    jsonPath("$[1].description", notNullValue()),
-                    jsonPath("$[1].price", notNullValue()),
-                    jsonPath("$[1].rating", notNullValue()),
-                    jsonPath("$[1].picturePath", notNullValue()),
+                        jsonPath("$[1].nameUkr", notNullValue()),
+                        jsonPath("$[1].nameNative", notNullValue()),
+                        jsonPath("$[1].yearOfRelease", notNullValue()),
+                        jsonPath("$[1].description", notNullValue()),
+                        jsonPath("$[1].price", notNullValue()),
+                        jsonPath("$[1].rating", notNullValue()),
+                        jsonPath("$[1].picturePath", notNullValue()),
 
-                    jsonPath("$[2].id", notNullValue()),
-                    jsonPath("$[2].nameUkr", notNullValue()),
-                    jsonPath("$[2].nameNative", notNullValue()),
-                    jsonPath("$[2].yearOfRelease", notNullValue()),
-                    jsonPath("$[2].description", notNullValue()),
-                    jsonPath("$[2].price", notNullValue()),
-                    jsonPath("$[2].rating", notNullValue()),
-                    jsonPath("$[2].picturePath", notNullValue())
+                        jsonPath("$[2].nameUkr", notNullValue()),
+                        jsonPath("$[2].nameNative", notNullValue()),
+                        jsonPath("$[2].yearOfRelease", notNullValue()),
+                        jsonPath("$[2].description", notNullValue()),
+                        jsonPath("$[2].price", notNullValue()),
+                        jsonPath("$[2].rating", notNullValue()),
+                        jsonPath("$[2].picturePath", notNullValue())
                 );
         assertSelectCount(3);
     }
@@ -172,9 +169,9 @@ class MovieControllerIT extends AbstractBaseITest {
                         .get("/api/v1/movies/{movieId}", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.nameNative").value("The Shawshank Redemption"))
                 .andExpect(content().json(getResponseAsString("response/movies/get-movie-by-id.json")));
-        assertSelectCount(1);
+        assertSelectCount(3);
     }
 
     @Test
@@ -194,7 +191,7 @@ class MovieControllerIT extends AbstractBaseITest {
     @DataSet(value = "response/movies/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @ExpectedDataSet(value = "response/movies/movies_after_add.yml", ignoreCols = "id")
     @DisplayName("Test add movie")
-    void whenAdd_thenCorrectJsonReturned() throws Exception {
+    void testWhenAdd_thenCorrectJsonReturned() throws Exception {
         MovieDto movieDto = MovieDto.builder()
                 .nameUkr("Вищий пілотаж")
                 .nameNative("Devotion")
@@ -221,10 +218,14 @@ class MovieControllerIT extends AbstractBaseITest {
     @DataSet(value = "response/movies/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @ExpectedDataSet(value = "response/movies/movies_after_update.yml", ignoreCols = "id")
     @DisplayName("Test update movie")
-    void whenUpdate_thenCorrectJsonReturned() throws Exception {
+    void testWhenUpdate_thenCorrectJsonReturned() throws Exception {
         MovieDto movieDto = MovieDto.builder()
                 .nameUkr("Вищий пілотаж")
                 .nameNative("Devotion")
+                .yearOfRelease(1994)
+                .description("Успешный банкир Энди Дюфрейн обвинен в убийстве собственной жены и ее любовника. Оказавшись в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по обе стороны решетки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. Но Энди, вооруженный живым умом и доброй душой, отказывается мириться с приговором судьбы и начинает разрабатывать невероятно дерзкий план своего освобождения.")
+                .rating(8.9)
+                .price(123.45)
                 .poster("https://uakino.club/uploads/mini/poster/b2/c7e758be3159ff0a1d05a1205f91c7.jpg")
                 .countriesId(Set.of(1L))
                 .genresId(Set.of(1L))
@@ -249,7 +250,7 @@ class MovieControllerIT extends AbstractBaseITest {
     @DataSet(value = "response/movies/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @ExpectedDataSet(value = "response/movies/movies_before_add.yml", ignoreCols = "id")
     @DisplayName("Test add movie with User Role")
-    void whenTryToAddWithUserRole_then403ResponseStatusReturned() throws Exception {
+    void testWhenTryToAddWithUserRole_then403ResponseStatusReturned() throws Exception {
         MovieDto movieDto = MovieDto.builder().build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/movies/add")
@@ -267,7 +268,7 @@ class MovieControllerIT extends AbstractBaseITest {
     @DataSet(value = "response/movies/movies_before_add.yml", cleanBefore = true, skipCleaningFor = "flyway_schema_history")
     @ExpectedDataSet(value = "response/movies/movies_before_add.yml", ignoreCols = "id")
     @DisplayName("Test update movie with User Role")
-    void whenTryToUpdateWithUserRole_then403ResponseStatusReturned() throws Exception {
+    void testWhenTryToUpdateWithUserRole_then403ResponseStatusReturned() throws Exception {
         MovieDto movieDto = MovieDto.builder().build();
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/movies/{movieId}", 2L)

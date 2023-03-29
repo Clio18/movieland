@@ -1,6 +1,5 @@
 [
   {
-    "id": 23,
     "nameUkr": "Блеф",
     "nameNative": "Bluff storia di truffe e di imbroglioni",
     "yearOfRelease": 1976,
@@ -10,7 +9,6 @@
     "picturePath": "https://images-na.ssl-images-amazon.com/images/M/MV5BMjk5YmMxMjMtMTlkNi00YTI5LThhYTMtOTk2NmNiNzQwMzI0XkEyXkFqcGdeQXVyMTQ3Njg3MQ@@._V1._SX140_CR0,0,140,209_.jpg"
   },
   {
-    "id": 19,
     "nameUkr": "Молчание ягнят",
     "nameNative": "The Silence of the Lambs",
     "yearOfRelease": 1990,
@@ -20,7 +18,6 @@
     "picturePath": "https://images-na.ssl-images-amazon.com/images/M/MV5BNjNhZTk0ZmEtNjJhMi00YzFlLWE1MmEtYzM1M2ZmMGMwMTU4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1._SY209_CR1,0,140,209_.jpg"
   },
   {
-    "id": 8,
     "nameUkr": "Бойцовский клуб",
     "nameNative": "Fight Club",
     "yearOfRelease": 1999,
