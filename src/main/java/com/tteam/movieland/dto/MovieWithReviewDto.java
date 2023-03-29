@@ -1,5 +1,6 @@
 package com.tteam.movieland.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class MovieWithReviewDto {
+    @JsonIgnore
     private Long id;
     private String nameUkr;
     private String nameNative;

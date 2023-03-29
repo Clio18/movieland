@@ -14,7 +14,7 @@ public interface MovieMapper {
     MovieDto toMovieDto(Movie movie);
 
     MovieWithReviewDto toWithReviewDto(Movie movie);
-
+    
     Movie toMovie(MovieDto movieDto);
 
     @Mapping(source = "countries", target = "countriesDto", qualifiedByName = "mapToSetCountryDto")
@@ -26,9 +26,14 @@ public interface MovieMapper {
     @IterableMapping(qualifiedByName = "mapCountryDtoWithoutData")
     static Set<CountryDto> mapToSetCountryDto(Set<Country> value) {
         return value.stream().map(c -> CountryDto.builder()
-                        .id(c.getId())
                         .name(c.getName())
                         .build())
+                .collect(Collectors.toSet());
+    }
+
+    @Named("mapToSetCountryIds")
+    static Set<Long> mapToSetCountryIds(Set<Country> value) {
+        return value.stream().map(Country::getId)
                 .collect(Collectors.toSet());
     }
 
@@ -41,9 +46,14 @@ public interface MovieMapper {
     @IterableMapping(qualifiedByName = "mapGenreDtoWithoutData")
     static Set<GenreDto> mapToSetGenreDto(Set<Genre> value) {
         return value.stream().map(g -> GenreDto.builder()
-                        .id(g.getId())
                         .name(g.getName())
                         .build())
+                .collect(Collectors.toSet());
+    }
+
+    @Named("mapToSetGenreIds")
+    static Set<Long> mapToSetGenreIds(Set<Genre> value) {
+        return value.stream().map(Genre::getId)
                 .collect(Collectors.toSet());
     }
 

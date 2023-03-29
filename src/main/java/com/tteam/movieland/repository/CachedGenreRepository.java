@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @RequiredArgsConstructor
 public class CachedGenreRepository implements GenreRepository {
     private final JpaGenreRepository jpaGenreRepository;
-    private volatile List<Genre> cachedGenreList;
+    volatile List<Genre> cachedGenreList;
     private final ReentrantLock lock = new ReentrantLock();
 
     @Override

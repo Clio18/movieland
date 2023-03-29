@@ -59,7 +59,7 @@ class MovieControllerTest extends AbstractBaseITest {
     private MovieWithCountriesAndGenresDto movieWithCountriesAndGenresDto;
 
     @BeforeEach
-    void init(){
+    void init() {
         Country usa = Country.builder()
                 .name("usa")
                 .build();
@@ -160,15 +160,15 @@ class MovieControllerTest extends AbstractBaseITest {
     @Test
     @WithMockUser
     @DisplayName("""
-    Test GetAll Rating Descending Order And Check Status Code, Result Size, Fields,
-    Service Method Calling""")
+            Test GetAll Rating Descending Order And Check Status Code, Result Size, Fields,
+            Service Method Calling""")
     void testGetAllDescRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie2, movie1);
         String sortingOrder = "desc";
         when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
         when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
         when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].price").value(12.0))
@@ -193,15 +193,15 @@ class MovieControllerTest extends AbstractBaseITest {
     @Test
     @WithMockUser
     @DisplayName("""
-    Test GetAll Rating Ascending Order And Check Status Code, Result Size, Fields,
-    Service Method Calling""")
+            Test GetAll Rating Ascending Order And Check Status Code, Result Size, Fields,
+            Service Method Calling""")
     void testGetAllAscRating_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie2, movie1);
         String sortingOrder = "asc";
         when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
         when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
         when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].price").value(12.0))
@@ -226,14 +226,14 @@ class MovieControllerTest extends AbstractBaseITest {
     @Test
     @WithMockUser
     @DisplayName("""
-    Test GetAllMovies No Rating Ordering And Check Status Code, Result Size, Fields, Service Method Calling""")
+            Test GetAllMovies No Rating Ordering And Check Status Code, Result Size, Fields, Service Method Calling""")
     void testGetAllMoviesNoRatingOrdering_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie2, movie1);
         String sortingOrder = "";
         when(movieService.getAllSortedByRating(sortingOrder)).thenReturn(movies);
         when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
         when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies?rating={sortingOrder}", sortingOrder)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].price").value(12.0))
@@ -263,7 +263,7 @@ class MovieControllerTest extends AbstractBaseITest {
         when(movieService.getRandom()).thenReturn(movies);
         when(mapper.toMovieDto(movie1)).thenReturn(movieDto1);
         when(mapper.toMovieDto(movie2)).thenReturn(movieDto2);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/random")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -276,13 +276,13 @@ class MovieControllerTest extends AbstractBaseITest {
     @Test
     @WithMockUser
     @DisplayName("""
-    Test GetMoviesByGenreId And Rating Ascending Order And Check Status Code,
-    Result Size, Fields, Service Method Calling""")
+            Test GetMoviesByGenreId And Rating Ascending Order And Check Status Code,
+            Result Size, Fields, Service Method Calling""")
     void testGetMoviesByGenreIdAndRatingAsc_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie1, movie2);
         String sortingOrder = "asc";
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -295,7 +295,7 @@ class MovieControllerTest extends AbstractBaseITest {
     void testGetMoviesByGenreIdAndRatingAsc_IfGenreNotFound() throws Exception {
         String sortingOrder = "asc";
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(Collections.emptyList());
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -305,13 +305,13 @@ class MovieControllerTest extends AbstractBaseITest {
     @Test
     @WithMockUser
     @DisplayName("""
-    Test GetMoviesByGenreId And Rating Descending Order And Check Status Code,
-    Result Size, Fields, Service Method Calling""")
+            Test GetMoviesByGenreId And Rating Descending Order And Check Status Code,
+            Result Size, Fields, Service Method Calling""")
     void testGetMoviesByGenreIdAndRatingDesc_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie1, movie2);
         String sortingOrder = "desc";
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -324,7 +324,7 @@ class MovieControllerTest extends AbstractBaseITest {
     void testGetMoviesByGenreIdAndRatingDesc_IfGenreNotFound() throws Exception {
         String sortingOrder = "desc";
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(Collections.emptyList());
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -334,13 +334,13 @@ class MovieControllerTest extends AbstractBaseITest {
     @Test
     @WithMockUser
     @DisplayName("""
-    Test GetMoviesByGenreId And No Rating Ordering And Check Status Code,
-    Result Size, Fields, Service Method Calling""")
+            Test GetMoviesByGenreId And No Rating Ordering And Check Status Code,
+            Result Size, Fields, Service Method Calling""")
     void testGetMoviesByGenreIdAndNoRatingOrdering_AndCheckStatus_Size_Fields_ServiceMethodCalling() throws Exception {
         List<Movie> movies = List.of(movie1, movie2);
         String sortingOrder = "";
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(movies);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -353,7 +353,7 @@ class MovieControllerTest extends AbstractBaseITest {
     void testGetMoviesByGenreIdAndNoRatingOrdering_IfGenreNotFound() throws Exception {
         String sortingOrder = "";
         when(movieService.getMoviesByGenreSortedByRating(1L, sortingOrder)).thenReturn(Collections.emptyList());
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/genre/{genreId}?rating={sortingOrder}", 1L, sortingOrder)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -367,7 +367,7 @@ class MovieControllerTest extends AbstractBaseITest {
         String currency = "UAH";
         when(movieService.getById(1L, currency)).thenReturn(movie1);
         when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString((movieWithCountriesAndGenresDto))))
@@ -384,7 +384,7 @@ class MovieControllerTest extends AbstractBaseITest {
         String currency = "USD";
         when(movieService.getById(1L, currency)).thenReturn(movie3);
         when(mapper.toWithCountriesAndGenresDto(movie3)).thenReturn(movieWithCountriesAndGenresDto);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, currency)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString((movieWithCountriesAndGenresDto))))
@@ -400,7 +400,7 @@ class MovieControllerTest extends AbstractBaseITest {
     void testGetMovieById_IfMovieNotFound() throws Exception {
         String currency = "UAH";
         when(movieService.getById(1L, currency)).thenThrow(MovieNotFoundException.class);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -413,7 +413,7 @@ class MovieControllerTest extends AbstractBaseITest {
     void testGetMovieById_IfWrongCurrency() throws Exception {
         String currency = "GHTR";
         when(movieService.getById(1L, currency)).thenThrow(CurrencyNotFoundException.class);
-        mockMvc.perform( MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/movies/{movieId}?currency={currency}", 1L, currency)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -424,8 +424,9 @@ class MovieControllerTest extends AbstractBaseITest {
     @WithMockUser(roles = {"ADMIN"})
     @DisplayName("Test Save And Check Status Code")
     void testSave_AndCheckStatus() throws Exception {
-        when(movieService.saveMovieWithGenresAndCountries(movieDto1)).thenReturn(movieWithCountriesAndGenresDto);
-        mockMvc.perform( MockMvcRequestBuilders
+        when(movieService.saveMovieWithGenresAndCountries(movieDto1)).thenReturn(movie1);
+        when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
+        mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/movies/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString((movieDto1))))
@@ -439,8 +440,9 @@ class MovieControllerTest extends AbstractBaseITest {
     @WithMockUser(roles = {"ADMIN"})
     @DisplayName("Test Update And Check Status Code")
     void testUpdate_AndCheckStatus() throws Exception {
-        when(movieService.updateMovieWithGenresAndCountries(1L, movieDto1)).thenReturn(movieWithCountriesAndGenresDto);
-        mockMvc.perform( MockMvcRequestBuilders
+        when(movieService.updateMovieWithGenresAndCountries(1L, movieDto1)).thenReturn(movie1);
+        when(mapper.toWithCountriesAndGenresDto(movie1)).thenReturn(movieWithCountriesAndGenresDto);
+        mockMvc.perform(MockMvcRequestBuilders
                         .put("/api/v1/movies/{movieId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString((movieDto1))))

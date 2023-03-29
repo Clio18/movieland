@@ -1,6 +1,5 @@
 [
   {
-    "id": 1,
     "nameUkr": "Побег из Шоушенка",
     "nameNative": "The Shawshank Redemption",
     "yearOfRelease": 1994,
@@ -10,7 +9,6 @@
     "picturePath": "https://images-na.ssl-images-amazon.com/images/M/MV5BODU4MjU4NjIwNl5BMl5BanBnXkFtZTgwMDU2MjEyMDE@._V1._SY209_CR0,0,140,209_.jpg"
   },
   {
-    "id": 2,
     "nameUkr": "Зеленая миля",
     "nameNative": "The Green Mile",
     "yearOfRelease": 1999,
@@ -20,7 +18,6 @@
     "picturePath": "https://images-na.ssl-images-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1._SY209_CR0,0,140,209_.jpg"
   },
   {
-    "id": 8,
     "nameUkr": "Бойцовский клуб",
     "nameNative": "Fight Club",
     "yearOfRelease": 1999,

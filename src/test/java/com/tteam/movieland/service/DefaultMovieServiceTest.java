@@ -104,7 +104,7 @@ class DefaultMovieServiceTest {
 
 
     @Test
-    @DisplayName("test getMoviesByGenreId and check result is not null, size, content equality, calling the repo's method")
+    @DisplayName("Test getMoviesByGenreId and check result is not null, size, content equality, calling the repo's method")
     void testGetMoviesByGenreId_AndCheckResultNotNull_Size_Content_CallingTheRepoMethod() {
         when(movieRepository.findByGenresId(PageRequest.of(0, 3), 1L)).thenReturn(page);
         when(page.stream()).thenReturn(stream);
@@ -156,7 +156,7 @@ class DefaultMovieServiceTest {
 
     @Test
     @DisplayName("Test Cached GetById Calling And Check No Interactions With DB")
-    void testCachedGetById_CheckNoInteractionsWithDB(){
+    void testCachedGetById_CheckNoInteractionsWithDB() {
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movie1));
         movieService.getById(1L, "UAH");
         movieService.getById(1L, "UAH");
