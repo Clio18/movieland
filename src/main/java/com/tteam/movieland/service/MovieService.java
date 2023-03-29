@@ -18,8 +18,8 @@ public interface MovieService {
 
     List<Movie> getMoviesByGenreSortedByRating(Long genreId, String sortingOrder);
 
-    MovieWithCountriesAndGenresDto saveMovieWithGenresAndCountries(MovieDto movieDto);
+    Movie saveMovieWithGenresAndCountries(MovieDto movieDto);
 
-    MovieWithCountriesAndGenresDto updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto);
+    Movie updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto);
 }
 

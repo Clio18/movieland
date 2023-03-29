@@ -2,8 +2,6 @@ package com.tteam.movieland.service;
 
 import com.tteam.movieland.cache.Cache;
 import com.tteam.movieland.dto.MovieDto;
-import com.tteam.movieland.dto.MovieWithCountriesAndGenresDto;
-import com.tteam.movieland.dto.mapper.MovieMapper;
 import com.tteam.movieland.entity.Movie;
 import com.tteam.movieland.exception.MovieNotFoundException;
 import com.tteam.movieland.repository.MovieRepository;
@@ -27,7 +25,6 @@ public class DefaultMovieService implements MovieService {
     private final EnrichMovieService enrichMovieService;
     private final MovieRepository movieRepository;
     private final CurrencyService currencyService;
-    private final MovieMapper mapper;
     private final Cache<Long, Movie> cache = new SoftReferenceCache<>();
 
     @Value("${movie.random.value}")
@@ -78,14 +75,14 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
-    public MovieWithCountriesAndGenresDto saveMovieWithGenresAndCountries(MovieDto movieDto) {
+    public Movie saveMovieWithGenresAndCountries(MovieDto movieDto) {
         Movie movie = enrichMovieService.enrich(movieDto);
         movieRepository.save(movie);
-        return mapper.toWithCountriesAndGenresDto(movie);
+        return movie;
     }
 
     @Override
-    public MovieWithCountriesAndGenresDto updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto) {
+    public Movie updateMovieWithGenresAndCountries(Long movieId, MovieDto movieDto) {
         movieDto.setId(movieId);
         Movie movie = enrichMovieService.enrich(movieDto);
         movieRepository.save(movie);
@@ -93,7 +90,7 @@ public class DefaultMovieService implements MovieService {
         if (optionalMovie.isPresent()) {
             cache.put(movieId, movie);
         }
-        return mapper.toWithCountriesAndGenresDto(movie);
+        return movie;
     }
 
     @Override
@@ -104,8 +101,6 @@ public class DefaultMovieService implements MovieService {
             double price = currencyService.convert(movie.getPrice(), currency);
             movie.setPrice(price);
         }
-        MovieDto movieDto = mapper.toMovieDto(movie);
-        enrichMovieService.enrich(movieDto);
         return movie;
     }
 
