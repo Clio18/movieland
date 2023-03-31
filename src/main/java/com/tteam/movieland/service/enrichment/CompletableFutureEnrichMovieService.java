@@ -63,19 +63,19 @@ public class CompletableFutureEnrichMovieService implements EnrichMovieService {
         }
     }
 
-    private CompletableFuture<Set<Country>> fetchCountries(Set<Long> countriesIds) {
+    CompletableFuture<Set<Country>> fetchCountries(Set<Long> countriesIds) {
         return CompletableFuture.supplyAsync(() -> countryService.findAllById(countriesIds), cachedPool);
     }
 
-    private CompletableFuture<Set<Genre>> fetchGenres(Set<Long> genresIds) {
+    CompletableFuture<Set<Genre>> fetchGenres(Set<Long> genresIds) {
         return CompletableFuture.supplyAsync(() -> genreService.findAllById(genresIds), cachedPool);
     }
 
-    private CompletableFuture<Set<Country>> fetchCountriesByMovieId(Long id) {
+    CompletableFuture<Set<Country>> fetchCountriesByMovieId(Long id) {
         return CompletableFuture.supplyAsync(() -> countryService.findAllByMovieId(id), cachedPool);
     }
 
-    private CompletableFuture<Set<Genre>> fetchGenresByMovieId(Long id) {
+    CompletableFuture<Set<Genre>> fetchGenresByMovieId(Long id) {
         return CompletableFuture.supplyAsync(() -> genreService.findAllByMovieId(id), cachedPool);
     }
 
