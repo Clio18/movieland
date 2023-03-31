@@ -74,7 +74,7 @@ public class ParallelEnrichMovieService implements EnrichMovieService {
 
         try {
             log.info("Parallel enrichment has been started...");
-            cachedPool.invokeAll(Set.of(taskCountry, taskGenre), 2, TimeUnit.SECONDS);
+            cachedPool.invokeAll(Set.of(taskCountry, taskGenre), 5, TimeUnit.SECONDS);
             log.info("Parallel enrichment should be finished");
             //loadFunc();
             return movie;

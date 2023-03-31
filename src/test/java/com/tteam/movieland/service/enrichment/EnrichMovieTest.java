@@ -14,12 +14,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +47,7 @@ public abstract class EnrichMovieTest {
 
         movieDto = new MovieDto();
         movieDto.setId(1L);
-        
+
         expectedMovie = new Movie();
         expectedMovie.setId(1L);
         expectedMovie.setCountries(expectedCountries);
@@ -71,8 +71,10 @@ public abstract class EnrichMovieTest {
         when(genreService.findAllById(genresIds)).thenReturn(expectedGenres);
         when(mapper.toMovie(movieDto)).thenReturn(expectedMovie);
 
-        Movie actualMovie = enrichMovieService.enrich(movieDto);
-        assertEquals(expectedMovie, actualMovie);
+        assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
+            Movie actualMovie = enrichMovieService.enrich(movieDto);
+            assertEquals(expectedMovie, actualMovie);
+        });
     }
 
     @Test
@@ -82,8 +84,10 @@ public abstract class EnrichMovieTest {
         when(genreService.findAllByMovieId(movieDto.getId())).thenReturn(expectedGenres);
         when(mapper.toMovie(movieDto)).thenReturn(expectedMovie);
 
-        Movie actualMovie = enrichMovieService.enrich(movieDto);
-        assertEquals(expectedMovie, actualMovie);
+        assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
+            Movie actualMovie = enrichMovieService.enrich(movieDto);
+            assertEquals(expectedMovie, actualMovie);
+        });
     }
 
     @Test
@@ -91,5 +95,19 @@ public abstract class EnrichMovieTest {
     void enrichMovieWithInterruptedThread() {
         executorService.shutdownNow();
         assertThrows(RuntimeException.class, () -> enrichMovieService.enrich(movieDto));
+    }
+
+
+    //testing purposes: execution takes approx. 7 sec
+    private void loadFunc() {
+        int sum = 0;
+        for (int i = 0; i < 100_000; i++) {
+            for (int j = 0; j < 100_000; j++) {
+                for (int k = 0; k < 100; k++) {
+                    sum = i + j + k;
+                }
+            }
+        }
+        System.out.println(sum);
     }
 }
