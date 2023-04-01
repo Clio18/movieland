@@ -16,8 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -30,17 +28,17 @@ public abstract class EnrichMovieTest {
     private GenreService genreService;
     @Mock
     private MovieMapper mapper;
-    private ExecutorService executorService;
     private EnrichMovieService enrichMovieService;
-    private MovieDto movieDto;
-    private Movie expectedMovie;
     private Set<Country> expectedCountries;
     private Set<Genre> expectedGenres;
-
+    private Movie expectedMovie;
+    private MovieDto movieDto;
+    protected abstract EnrichMovieService getEnrichMovieService(CountryService countryService,
+                                                                GenreService genreService,
+                                                                MovieMapper mapper);
     @BeforeEach
     void setUp() {
-        executorService = Executors.newFixedThreadPool(2);
-        enrichMovieService = getEnrichMovieService(countryService, genreService, executorService, mapper);
+        enrichMovieService = getEnrichMovieService(countryService, genreService, mapper);
 
         expectedCountries = Set.of(new Country(1L, "Ukraine"), new Country(2L, "USA"));
         expectedGenres = Set.of(new Genre(1L, "Action"), new Genre(3L, "Drama"));
@@ -53,11 +51,6 @@ public abstract class EnrichMovieTest {
         expectedMovie.setCountries(expectedCountries);
         expectedMovie.setGenres(expectedGenres);
     }
-
-    protected abstract EnrichMovieService getEnrichMovieService(CountryService countryService,
-                                                                GenreService genreService,
-                                                                ExecutorService executorService,
-                                                                MovieMapper mapper);
 
     @Test
     @DisplayName("Enrich movie with countries and genres")
@@ -88,26 +81,5 @@ public abstract class EnrichMovieTest {
             Movie actualMovie = enrichMovieService.enrich(movieDto);
             assertEquals(expectedMovie, actualMovie);
         });
-    }
-
-    @Test
-    @DisplayName("Enrich movie with interrupted thread")
-    void enrichMovieWithInterruptedThread() {
-        executorService.shutdownNow();
-        assertThrows(RuntimeException.class, () -> enrichMovieService.enrich(movieDto));
-    }
-
-
-    //testing purposes: execution takes approx. 7 sec
-    private void loadFunc() {
-        int sum = 0;
-        for (int i = 0; i < 100_000; i++) {
-            for (int j = 0; j < 100_000; j++) {
-                for (int k = 0; k < 100; k++) {
-                    sum = i + j + k;
-                }
-            }
-        }
-        System.out.println(sum);
     }
 }
