@@ -5,6 +5,7 @@ import com.tteam.movieland.entity.Country;
 import com.tteam.movieland.entity.Genre;
 import com.tteam.movieland.entity.Movie;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +22,7 @@ class MovieMapperTest {
     private MovieDto movieDto;
 
     @BeforeEach
-    void init(){
+    void init() {
         Country usa = Country.builder()
                 .name("usa")
                 .build();
@@ -62,6 +63,7 @@ class MovieMapperTest {
     }
 
     @Test
+    @DisplayName("Test that toMovieDto method converts Movie entity to MovieDto correctly")
     void testToMovieDtoShouldConvertCorrectly() {
         MovieDto movieDto = mapper.toMovieDto(movie);
         assertEquals(this.movieDto, movieDto);

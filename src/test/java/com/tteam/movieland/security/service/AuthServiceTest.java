@@ -30,17 +30,12 @@ class AuthServiceTest {
     private UserRepository userRepository;
     @Mock
     private JwtService jwtService;
-
     @Mock
     private AuthenticationManager authenticationManager;
-
     @InjectMocks
     private AuthService authService;
-
     private final String email = "ronald.reynolds66@example.com";
     private final String password = "paco";
-    private final String passwordEncoded = "$2a$10$nGg/r1NP6l6Os.F7ZZ056ug0vO9YY0W6PKSYHXF7Ak2yZgkdHJ86q";
-    private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyb25hbGQucmV5bm9sZHM2NkBleGFtcGxlLmNvbSIsImlhdCI6MTY3MzcxMzI1NiwiZXhwIjoxNjczNzE0Njk2fQ.CiuRcJLXb4OFeguJ007XDWxkQDkEYZy5984jPYz-iJk";
 
     private final AuthRequest authRequest = AuthRequest.builder()
             .email(email)
@@ -64,6 +59,7 @@ class AuthServiceTest {
     @DisplayName("Test Login With Valid Request And Check Response Is Not Null, Content And Method Calling")
     void testLoginWithValidRequest_CheckResponseNotNull_Content_MethodCalling() {
         when(userRepository.findByEmail(authRequest.getEmail())).thenReturn(Optional.of(user));
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyb25hbGQucmV5bm9sZHM2NkBleGFtcGxlLmNvbSIsImlhdCI6MTY3MzcxMzI1NiwiZXhwIjoxNjczNzE0Njk2fQ.CiuRcJLXb4OFeguJ007XDWxkQDkEYZy5984jPYz-iJk";
         when(jwtService.generateToken(user)).thenReturn(token);
 
         AuthResponse authResponse = authService.authenticate(authRequest);

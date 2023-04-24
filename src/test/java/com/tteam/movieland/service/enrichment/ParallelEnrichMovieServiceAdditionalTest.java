@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class ParallelEnrichMovieServiceTestAdditionalTest {
+class ParallelEnrichMovieServiceAdditionalTest {
     @Mock
     private CountryService countryService;
     @Mock
@@ -35,8 +35,8 @@ class ParallelEnrichMovieServiceTestAdditionalTest {
     }
 
     @Test
-    @DisplayName("Enrich movie with interrupted thread")
-    void enrichMovieWithInterruptedThread() {
+    @DisplayName("Test enrich movie with interrupted thread")
+    void testEnrichMovieWithInterruptedThread() {
         executorService.shutdownNow();
         assertThrows(RuntimeException.class, () -> enrichMovieService.enrich(movieDto));
     }
