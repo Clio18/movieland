@@ -3,6 +3,8 @@ spring:
     url: jdbc:postgresql://localhost:8200/cinema
     username: postgres
     password: postgres
+  kafka:
+    bootstrap-servers: localhost:9092
 
 security:
   jwtSecretKey: 2A462D4A614E635266556A586E3272357538782F413F4428472B4B6250655367

@@ -6,8 +6,6 @@ import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
@@ -21,7 +19,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
 class JwtServiceTest extends AbstractBaseITest {
 
     @Autowired
@@ -56,7 +53,6 @@ class JwtServiceTest extends AbstractBaseITest {
     @DisplayName("Test valid token verification")
     void testIsTokenValidShouldReturnTrueForValidToken() {
         String token = jwtService.generateToken(claims, userDetails);
-        System.out.println(token);
         boolean result = jwtService.isTokenValid(token, userDetails);
         assertTrue(result);
     }

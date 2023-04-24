@@ -47,6 +47,7 @@ class CompletableFutureEnrichMovieServiceAdditionalTest {
     }
 
     @Test
+    @DisplayName("Test fetching countries by IDs")
     void testFetchCountries() {
         Set<Long> countriesIds = Set.of(1L, 2L, 3L);
         when(countryService.findAllById(countriesIds)).thenReturn(expectedCountries);
@@ -58,6 +59,7 @@ class CompletableFutureEnrichMovieServiceAdditionalTest {
     }
 
     @Test
+    @DisplayName("Test fetching genres by IDs")
     void testFetchGenres() {
         Set<Long> genreIds = Set.of(1L, 2L, 3L);
         when(genreService.findAllById(genreIds)).thenReturn(expectedGenres);
@@ -69,6 +71,7 @@ class CompletableFutureEnrichMovieServiceAdditionalTest {
     }
 
     @Test
+    @DisplayName("Test fetching countries by movie ID")
     void testFetchCountriesByMovieId() {
         Long movieId = 1L;
         when(countryService.findAllByMovieId(movieId)).thenReturn(expectedCountries);
@@ -80,6 +83,7 @@ class CompletableFutureEnrichMovieServiceAdditionalTest {
     }
 
     @Test
+    @DisplayName("Test fetching genres by movie ID")
     void testFetchGenresByMovieId() {
         Long movieId = 1L;
         when(genreService.findAllByMovieId(movieId)).thenReturn(expectedGenres);
@@ -91,8 +95,8 @@ class CompletableFutureEnrichMovieServiceAdditionalTest {
     }
 
     @Test
-    @DisplayName("Enrich movie with interrupted thread")
-    void enrichMovieWithInterruptedThread() {
+    @DisplayName("Test enrich movie with interrupted thread")
+    void testEnrichMovieWithInterruptedThread() {
         executorService.shutdownNow();
         assertThrows(RuntimeException.class, () -> enrichMovieService.enrich(movieDto));
     }

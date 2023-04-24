@@ -16,17 +16,17 @@
     <properties>
         <java.version>19</java.version>
         <org.testcontainers.version>1.17.6</org.testcontainers.version>
-        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
+        <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.22</org.projectlombok.version>
         <org.projectlombok-binding.version>0.2.0</org.projectlombok-binding.version>
         <org.apache.maven.plugins.version>3.0.0-M8</org.apache.maven.plugins.version>
         <com.vladmihalcea.version>1.0.7</com.vladmihalcea.version>
         <io.jsonwebtoken.version>0.11.5</io.jsonwebtoken.version>
-        <com.github.database-rider.version>1.35.0</com.github.database-rider.version>
+        <com.github.database-rider.version>1.36.0</com.github.database-rider.version>
         <org.springframework.retry.version>2.0.0</org.springframework.retry.version>
-        <org.springframework.spring-aspects.version>5.3.24</org.springframework.spring-aspects.version>
+        <org.springframework.spring-aspects.version>6.0.6</org.springframework.spring-aspects.version>
 
-        <spring-cloud.version>4.0.0</spring-cloud.version>
+        <spring-cloud.version>4.0.2</spring-cloud.version>
 
         <skipIT>true</skipIT>
         <spring.profiles.active>dev</spring.profiles.active>
@@ -40,6 +40,12 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+
+        <!-- KAFKA -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <!-- FEIGN -->
@@ -157,7 +163,25 @@
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
         </dependency>
+
+        <!--
+        Avoid vulnerabilities of spring-boot-starter-web:
+        CVE-2022-41854 6.5 Out-of-bounds Write vulnerability with medium severity
+        CVE-2022-1471 9.8 Deserialization of Untrusted Data vulnerability with high severity
+        -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <!--
+        Avoid vulnerability of spring-cloud-starter-openfeign:
+        CVE-2023-24998 7.5 Allocation of Resources Without Limits or Throttling vulnerability with medium severity found
+        -->
+
     </dependencies>
+
 
     <build>
         <plugins>
